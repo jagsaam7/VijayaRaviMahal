@@ -1175,11 +1175,61 @@
   </div>
 </div>
 
+<!-- ════════════ VENDOR MANAGEMENT (admin-only dedicated page) ════════════ -->
+<div id="page-vendor-admin" class="page">
+  <div class="admin-hero" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;">
+    <div>
+      <h1>Vendor Management</h1>
+      <p>Grouped by service category · click a vendor to view &amp; edit full details</p>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn-outline" style="border-color:var(--gold);color:var(--gold);" onclick="showPage('admin')">← Back to Dashboard</button>
+      <button class="btn-solid" onclick="openVendorAddForm()">+ Add New Vendor</button>
+    </div>
+  </div>
+  <div class="admin-body">
+
+    <!-- Grid view: categories with 3D icons + vendor avatars -->
+    <div id="va-grid-view">
+      <div id="va-categories"></div>
+    </div>
+
+    <!-- Add / Edit form (hidden until "+ Add New Vendor" or an avatar's Edit button is used) -->
+    <div id="va-form-view" class="hidden">
+      <div class="admin-card" style="max-width:640px;margin:0 auto;">
+        <h3 id="va-form-title">Add New Vendor</h3>
+        <div class="provider-form">
+          <select id="pv-category"></select>
+          <input type="text" id="pv-name" placeholder="Provider / Vendor Name">
+          <input type="tel" id="pv-mobile" placeholder="Mobile Number">
+          <input type="number" id="pv-costday" placeholder="Cost per day (₹)">
+          <input type="number" id="pv-costunit" placeholder="Cost per unit (₹)">
+          <label class="pv-file-label">📇 Business Card<input type="file" accept="image/*" id="pv-card" style="display:none" onchange="pvFilePreview(this,'pv-card-name')"><span id="pv-card-name">No file chosen</span></label>
+          <label class="pv-file-label">📄 Brochure<input type="file" accept="image/*,application/pdf" id="pv-brochure" style="display:none" onchange="pvFilePreview(this,'pv-brochure-name')"><span id="pv-brochure-name">No file chosen</span></label>
+          <input type="text" id="pv-note" placeholder="Note (e.g. 3-6 course veg menu)" style="grid-column:1/-1;">
+          <button class="btn-save-prices" id="pv-submit-btn" style="grid-column:1/-1;" onclick="addProvider(event)">+ Add Provider</button>
+          <button class="btn-mini ghost" style="grid-column:1/-1;" onclick="closeVendorForm()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detail sub-page for a clicked vendor -->
+    <div id="va-detail-view" class="hidden">
+      <button class="btn-outline" style="border-color:var(--gold);color:var(--gold);margin-bottom:1.5rem;" onclick="closeVendorDetailPage()">← Back to Vendors</button>
+      <div class="admin-card" style="max-width:520px;margin:0 auto;text-align:center;" id="va-detail-content"></div>
+    </div>
+
+  </div>
+</div>
+
 <!-- ════════════ ADMIN PAGE ════════════ -->
 <div id="page-admin" class="page">
-  <div class="admin-hero">
-    <h1>Admin Dashboard</h1>
-    <p>Vijaya Ravi Mahal · Management Panel</p>
+  <div class="admin-hero" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;">
+    <div>
+      <h1>Admin Dashboard</h1>
+      <p>Vijaya Ravi Mahal · Management Panel</p>
+    </div>
+    <button class="btn-solid" onclick="showPage('vendor-admin')">🎪 Manage Vendors</button>
   </div>
   <div class="admin-body">
     <div class="admin-kpis" id="admin-kpis">
@@ -1229,21 +1279,10 @@
 
       <div class="admin-card" style="grid-column: 1 / -1;">
         <h3>Service Providers / Vendors</h3>
-        <p style="font-size:0.8rem;color:var(--muted);margin-top:-1rem;margin-bottom:1.2rem;">
-          Add vendors for any service type with contact, cost, and business card / brochure attachments. Visible to customers only in the dedicated <b>Vendors</b> tab, and only after their advance payment is done.
+        <p style="font-size:0.85rem;color:var(--mid);">
+          <span id="va-summary-count">0</span> vendors listed across your service categories. Manage the full directory — add, edit, or remove vendors with business cards & brochures — in the dedicated Vendor Management page.
         </p>
-        <div class="provider-form">
-          <select id="pv-category"></select>
-          <input type="text" id="pv-name" placeholder="Provider / Vendor Name">
-          <input type="tel" id="pv-mobile" placeholder="Mobile Number">
-          <input type="number" id="pv-costday" placeholder="Cost per day (₹)">
-          <input type="number" id="pv-costunit" placeholder="Cost per unit (₹)">
-          <label class="pv-file-label">📇 Business Card<input type="file" accept="image/*" id="pv-card" style="display:none" onchange="pvFilePreview(this,'pv-card-name')"><span id="pv-card-name">No file chosen</span></label>
-          <label class="pv-file-label">📄 Brochure<input type="file" accept="image/*,application/pdf" id="pv-brochure" style="display:none" onchange="pvFilePreview(this,'pv-brochure-name')"><span id="pv-brochure-name">No file chosen</span></label>
-          <input type="text" id="pv-note" placeholder="Note (e.g. 3-6 course veg menu)" style="grid-column:1/-1;">
-          <button class="btn-save-prices" style="grid-column:1/-1;" onclick="addProvider(event)">+ Add Provider</button>
-        </div>
-        <div id="providers-list" style="margin-top:1.5rem;"></div>
+        <button class="btn-solid" style="margin-top:0.6rem;" onclick="showPage('vendor-admin')">🎪 Open Vendor Management →</button>
       </div>
 
       <div class="admin-card" style="grid-column: 1 / -1;">
@@ -1539,6 +1578,13 @@ async function tursoInsertProvider(pv) {
   }]);
 }
 
+async function tursoUpdateProvider(pv) {
+  await tursoExec([{
+    sql: `UPDATE providers SET category=?, name=?, mobile=?, businessCard=?, brochure=?, costPerDay=?, costPerUnit=?, note=? WHERE id=?`,
+    args: [pv.category, pv.name, pv.mobile, pv.businessCard||'', pv.brochure||'', pv.costPerDay||0, pv.costPerUnit||0, pv.note||'', pv.id]
+  }]);
+}
+
 async function tursoDeleteProvider(id) {
   await tursoExec([{ sql: "DELETE FROM providers WHERE id = ?", args: [id] }]);
 }
@@ -1779,6 +1825,7 @@ function showPage(page, btn) {
   if(page==='admin') loadAdminPage();
   if(page==='booking') initBookingPage();
   if(page==='vendors') loadVendorsPage();
+  if(page==='vendor-admin') loadVendorAdminPage();
 }
 
 function requireLogin(page) {
@@ -2401,8 +2448,8 @@ function loadAdminPage() {
   document.getElementById('kpi-rev').textContent = '₹'+getRevenueEvents().reduce((s,e)=>s+e.amount,0).toLocaleString();
   document.getElementById('kpi-users').textContent = users.length;
   renderRevenue();
-  populateProviderCategories();
-  renderProviders();
+  const vaCount = document.getElementById('va-summary-count');
+  if(vaCount) vaCount.textContent = DB.getProviders().length;
 
   // Bookings table
   const tbody = document.getElementById('admin-bookings-body');
@@ -2753,6 +2800,36 @@ function renderRevenue(){
 
 // ─── Service Providers / Vendors ───
 
+// ─── Category 3D icons (Fluent 3D emoji), keyed by common service category names/keywords ───
+const CATEGORY_ICON_MAP = {
+  catering: 'Shallow%20pan%20of%20food', cateringnv: 'Poultry%20leg',
+  lighting: 'Glowing%20star', floral: 'Bouquet', sound: 'Speaker%20high%20volume',
+  dj: 'Musical%20notes', photo: 'Camera', video: 'Movie%20camera',
+  generator: 'Electric%20plug', security: 'Shield', mehendi: 'Herb',
+  decoration: 'Sparkles', other: 'Sparkles'
+};
+function categoryIconUrl(key, name){
+  const k = (key||'').toLowerCase();
+  let folder = CATEGORY_ICON_MAP[k];
+  if(!folder){
+    const n = (name||'').toLowerCase();
+    if(n.includes('cater')) folder = 'Shallow%20pan%20of%20food';
+    else if(n.includes('light')) folder = 'Glowing%20star';
+    else if(n.includes('flower')||n.includes('floral')||n.includes('decor')) folder = 'Bouquet';
+    else if(n.includes('sound')||n.includes('speaker')) folder = 'Speaker%20high%20volume';
+    else if(n.includes('dj')||n.includes('music')) folder = 'Musical%20notes';
+    else if(n.includes('photo')) folder = 'Camera';
+    else if(n.includes('video')||n.includes('film')) folder = 'Movie%20camera';
+    else if(n.includes('drone')) folder = 'Airplane';
+    else if(n.includes('power')||n.includes('generator')||n.includes('electric')) folder = 'Electric%20plug';
+    else if(n.includes('secur')) folder = 'Shield';
+    else if(n.includes('mehendi')||n.includes('henna')) folder = 'Herb';
+  }
+  if(!folder) return '';
+  const file = folder.replace(/%20/g,'_').toLowerCase();
+  return `https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/${folder}/3D/${file}_3d.png`;
+}
+
 // Deterministic color per name, used for both category and vendor avatars.
 const AVATAR_PALETTE = ['#8B1A2B','#C9962A','#2E7D4F','#4A6FA5','#8E5A9E','#B5601F','#3E7C89','#A5384B'];
 function avatarColor(str){
@@ -2789,28 +2866,124 @@ function catDisplayName(key){
   return p.services[key]?.name || (key==='other' ? 'Other / Custom' : key);
 }
 
-function renderProviders(){
-  const list = document.getElementById('providers-list');
-  if(!list) return;
+// ─── Dedicated Vendor Management page (admin) ───
+let editingProviderId = null;
+
+function vaShowView(view){
+  ['va-grid-view','va-form-view','va-detail-view'].forEach(id=>{
+    document.getElementById(id).classList.toggle('hidden', id !== 'va-'+view+'-view');
+  });
+}
+
+function loadVendorAdminPage(){
+  populateProviderCategories();
+  renderVACategories();
+  vaShowView('grid');
+}
+
+function renderVACategories(){
+  const wrap = document.getElementById('va-categories');
+  if(!wrap) return;
   const providers = DB.getProviders();
-  if(!providers.length){ list.innerHTML = '<p style="font-size:0.82rem;color:var(--muted);">No vendors added yet.</p>'; return; }
+  const countEl = document.getElementById('va-summary-count');
+  if(countEl) countEl.textContent = providers.length;
+  const p = DB.getPrices();
+  // Show every priced service category (even with 0 vendors yet) plus any custom "other" vendors.
+  const allCats = Object.keys(p.services);
+  if(providers.some(pv=>pv.category==='other')) allCats.push('other');
+  if(!providers.length){
+    wrap.innerHTML = `<div style="text-align:center;color:var(--muted);padding:3rem 1rem;">No vendors added yet. Click "+ Add New Vendor" to get started.</div>`;
+    return;
+  }
   const grouped = {};
   providers.forEach(pv=>{ (grouped[pv.category] = grouped[pv.category]||[]).push(pv); });
-  list.innerHTML = Object.entries(grouped).map(([cat, items])=>`
-    <div class="provider-cat-group">
-      <div class="provider-cat-title">${catDisplayName(cat)}</div>
-      ${items.map(pv=>`
-        <div class="provider-item">
-          <div style="display:flex;align-items:center;gap:10px;">
-            <div style="width:36px;height:36px;border-radius:50%;background:${avatarColor(pv.name)};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.78rem;flex-shrink:0;">${initials(pv.name)}</div>
-            <div class="pv-info">
-              <b>${pv.name}</b> — 📞 ${pv.mobile}
-              <span>${pv.costPerDay?`${rupee(pv.costPerDay)}/day `:''}${pv.costPerUnit?`${rupee(pv.costPerUnit)}/unit`:''}${pv.note?' · '+pv.note:''}${pv.businessCard?' · 📇 card':''}${pv.brochure?' · 📄 brochure':''}</span>
+  wrap.innerHTML = Object.keys(grouped).map(cat=>{
+    const items = grouped[cat];
+    const iconUrl = categoryIconUrl(cat, catDisplayName(cat));
+    return `
+    <div class="vendor-cat-block">
+      <div class="vendor-cat-head">
+        ${iconUrl
+          ? `<img class="cat-avatar" style="object-fit:contain;background:${avatarColor(cat)};padding:6px;" src="${iconUrl}" onerror="this.outerHTML='<div class=&quot;cat-avatar&quot; style=&quot;background:${avatarColor(cat)};&quot;>${initials(catDisplayName(cat))}</div>'" alt="">`
+          : `<div class="cat-avatar" style="background:${avatarColor(cat)};">${initials(catDisplayName(cat))}</div>`}
+        <h3>${catDisplayName(cat)} <span style="font-size:0.72rem;color:var(--muted);font-weight:400;">(${items.length} vendor${items.length>1?'s':''})</span></h3>
+      </div>
+      <div class="vendor-grid">
+        ${items.map(pv=>`
+          <div class="vendor-avatar-wrap">
+            <div class="vendor-tooltip">📞 ${pv.mobile}</div>
+            <div class="vendor-avatar" style="background:${avatarColor(pv.name)};" onclick="openVendorDetailAdmin('${pv.id}')">
+              ${initials(pv.name)}
+              <span class="call-badge">📞</span>
             </div>
-          </div>
-          <button class="pv-del" onclick="deleteProvider('${pv.id}')" title="Remove">✕</button>
-        </div>`).join('')}
-    </div>`).join('');
+            <div class="vendor-name-label">${pv.name}</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openVendorAddForm(){
+  editingProviderId = null;
+  populateProviderCategories();
+  ['pv-name','pv-mobile','pv-costday','pv-costunit','pv-note'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('pv-card').value = ''; document.getElementById('pv-card-name').textContent = 'No file chosen';
+  document.getElementById('pv-brochure').value = ''; document.getElementById('pv-brochure-name').textContent = 'No file chosen';
+  document.getElementById('va-form-title').textContent = 'Add New Vendor';
+  document.getElementById('pv-submit-btn').textContent = '+ Add Provider';
+  vaShowView('form');
+}
+
+function closeVendorForm(){
+  vaShowView('grid');
+  renderVACategories();
+}
+
+// Sub-page: full read-only details for a clicked vendor avatar, with Edit / Delete.
+function openVendorDetailAdmin(id){
+  const pv = DB.getProviders().find(p=>p.id===id);
+  if(!pv) return;
+  const box = document.getElementById('va-detail-content');
+  box.innerHTML = `
+    <div class="vendor-modal-avatar" style="background:${avatarColor(pv.name)};">${initials(pv.name)}</div>
+    <h3>${pv.name}</h3>
+    <div class="v-cat">${catDisplayName(pv.category)}</div>
+    <div class="v-detail-row"><span>Mobile</span><span>${pv.mobile}</span></div>
+    ${pv.costPerDay ? `<div class="v-detail-row"><span>Cost per day</span><span>${rupee(pv.costPerDay)}</span></div>` : ''}
+    ${pv.costPerUnit ? `<div class="v-detail-row"><span>Cost per unit</span><span>${rupee(pv.costPerUnit)}</span></div>` : ''}
+    ${pv.note ? `<div class="v-detail-row"><span>Note</span><span style="text-align:right;">${pv.note}</span></div>` : ''}
+    <div class="v-attachments">
+      ${pv.businessCard ? `<a href="${pv.businessCard}" target="_blank">📇 Business Card</a>` : ''}
+      ${pv.brochure ? `<a href="${pv.brochure}" target="_blank">📄 Brochure</a>` : ''}
+    </div>
+    <div style="display:flex;gap:10px;margin-top:16px;">
+      <button class="btn-mini" style="flex:1;" onclick="startEditProvider('${pv.id}')">✎ Edit Details</button>
+      <button class="btn-mini ghost" style="flex:1;color:var(--error);border-color:var(--error);" onclick="deleteProvider('${pv.id}')">✕ Delete Vendor</button>
+    </div>
+  `;
+  vaShowView('detail');
+}
+function closeVendorDetailPage(){
+  vaShowView('grid');
+  renderVACategories();
+}
+
+function startEditProvider(id){
+  const pv = DB.getProviders().find(p=>p.id===id);
+  if(!pv) return;
+  editingProviderId = id;
+  populateProviderCategories();
+  document.getElementById('pv-category').value = pv.category;
+  document.getElementById('pv-name').value = pv.name;
+  document.getElementById('pv-mobile').value = pv.mobile;
+  document.getElementById('pv-costday').value = pv.costPerDay || '';
+  document.getElementById('pv-costunit').value = pv.costPerUnit || '';
+  document.getElementById('pv-note').value = pv.note || '';
+  document.getElementById('pv-card-name').textContent = pv.businessCard ? 'Existing card on file (choose to replace)' : 'No file chosen';
+  document.getElementById('pv-brochure-name').textContent = pv.brochure ? 'Existing brochure on file (choose to replace)' : 'No file chosen';
+  document.getElementById('va-form-title').textContent = 'Edit Vendor';
+  document.getElementById('pv-submit-btn').textContent = '✓ Update Provider';
+  vaShowView('form');
 }
 
 async function addProvider(evt){
@@ -2824,18 +2997,39 @@ async function addProvider(evt){
   const brochureFile = document.getElementById('pv-brochure').files[0];
   if(!name || !mobile || (!costPerDay && !costPerUnit)){ toast('Name, mobile and at least one cost field are required.','error'); return; }
 
-  const addBtn = evt?.target; if(addBtn) { addBtn.disabled = true; addBtn.textContent = 'Adding…'; }
+  const addBtn = evt?.target; if(addBtn) { addBtn.disabled = true; addBtn.textContent = editingProviderId ? 'Updating…' : 'Adding…'; }
+  const providers = DB.getProviders();
+
+  if(editingProviderId){
+    const existing = providers.find(p=>p.id===editingProviderId);
+    const [newCard, newBrochure] = await Promise.all([readFileAsDataURL(cardFile), readFileAsDataURL(brochureFile)]);
+    const updated = {
+      ...existing, category, name, mobile, costPerDay, costPerUnit, note,
+      businessCard: newCard || existing.businessCard,
+      brochure: newBrochure || existing.brochure
+    };
+    const idx = providers.findIndex(p=>p.id===editingProviderId);
+    providers[idx] = updated;
+    DB.saveProviders(providers);
+    editingProviderId = null;
+    if(addBtn) { addBtn.disabled = false; addBtn.textContent = '+ Add Provider'; }
+    closeVendorForm();
+    try {
+      await tursoUpdateProvider(updated);
+      toast('Vendor updated ✓','success');
+    } catch(e) {
+      toast('Updated locally, but Turso sync failed — check connection.','error');
+    }
+    return;
+  }
+
   const [businessCard, brochure] = await Promise.all([readFileAsDataURL(cardFile), readFileAsDataURL(brochureFile)]);
   const pv = { id: 'PV-'+Date.now(), category, name, mobile, costPerDay, costPerUnit, businessCard, brochure, note };
 
-  const providers = DB.getProviders();
   providers.push(pv);
   DB.saveProviders(providers);
-  renderProviders();
-  ['pv-name','pv-mobile','pv-costday','pv-costunit','pv-note'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('pv-card').value = ''; document.getElementById('pv-card-name').textContent = 'No file chosen';
-  document.getElementById('pv-brochure').value = ''; document.getElementById('pv-brochure-name').textContent = 'No file chosen';
   if(addBtn) { addBtn.disabled = false; addBtn.textContent = '+ Add Provider'; }
+  closeVendorForm();
   try {
     await tursoInsertProvider(pv);
     toast('Vendor added ✓','success');
@@ -2847,7 +3041,8 @@ async function addProvider(evt){
 async function deleteProvider(id){
   if(!confirm('Remove this vendor?')) return;
   DB.saveProviders(DB.getProviders().filter(p=>p.id!==id));
-  renderProviders();
+  if(editingProviderId===id) editingProviderId = null;
+  closeVendorDetailPage();
   try { await tursoDeleteProvider(id); } catch(e) { toast('Removed locally, but Turso sync failed.','error'); }
 }
 
@@ -2868,10 +3063,14 @@ function loadVendorsPage(){
   }
   const grouped = {};
   providers.forEach(pv => { (grouped[pv.category] = grouped[pv.category]||[]).push(pv); });
-  wrap.innerHTML = Object.entries(grouped).map(([cat, items])=>`
+  wrap.innerHTML = Object.entries(grouped).map(([cat, items])=>{
+    const iconUrl = categoryIconUrl(cat, catDisplayName(cat));
+    return `
     <div class="vendor-cat-block">
       <div class="vendor-cat-head">
-        <div class="cat-avatar" style="background:${avatarColor(cat)};">${initials(catDisplayName(cat))}</div>
+        ${iconUrl
+          ? `<img class="cat-avatar" style="object-fit:contain;background:${avatarColor(cat)};padding:6px;" src="${iconUrl}" onerror="this.outerHTML='<div class=&quot;cat-avatar&quot; style=&quot;background:${avatarColor(cat)};&quot;>${initials(catDisplayName(cat))}</div>'" alt="">`
+          : `<div class="cat-avatar" style="background:${avatarColor(cat)};">${initials(catDisplayName(cat))}</div>`}
         <h3>${catDisplayName(cat)}</h3>
       </div>
       <div class="vendor-grid">
@@ -2885,7 +3084,8 @@ function loadVendorsPage(){
             <div class="vendor-name-label">${pv.name}</div>
           </div>`).join('')}
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function openVendorDetail(id){
