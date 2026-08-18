@@ -20,6 +20,44 @@
     --error:      #C0392B;
     --shadow:     rgba(139,26,43,0.15);
   }
+  body.dark-mode {
+    --champagne:  #2A1F17;
+    --ivory:      #15100C;
+    --dark:       #F3E8D9;
+    --mid:        #E4D3BA;
+    --muted:      #B49E82;
+    --white:      #241A14;
+    --shadow:     rgba(0,0,0,0.4);
+  }
+  body.dark-mode .facility-card, body.dark-mode .booking-card, body.dark-mode .price-row,
+  body.dark-mode .form-section, body.dark-mode .stage-panel, body.dark-mode .summary-box {
+    background: var(--white); border-color: rgba(201,150,42,0.25);
+  }
+  body.dark-mode .modal-box, body.dark-mode .success-box { background: var(--white); }
+  .theme-toggle {
+    width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--gold);
+    background: transparent; color: var(--gold); font-size: 1.05rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: transform 0.3s;
+  }
+  .theme-toggle:hover { transform: rotate(20deg) scale(1.08); }
+
+  /* ─── Amount / Rupee display ─── */
+  .amt-badge {
+    display: inline-flex; align-items: baseline; gap: 2px; font-family: 'Playfair Display', serif;
+    font-weight: 700; color: var(--crimson);
+  }
+  .amt-badge .rupee-sym {
+    font-family: 'Lato', sans-serif; font-weight: 600; font-size: 0.75em; margin-right: 2px;
+    color: var(--gold);
+  }
+  .amt-block {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    background: linear-gradient(135deg, rgba(201,150,42,0.08), rgba(139,26,43,0.05));
+    border: 1px solid rgba(201,150,42,0.3); border-radius: 10px; padding: 10px 16px; margin: 8px 0;
+  }
+  .amt-block .amt-label { font-size: 0.78rem; color: var(--muted); letter-spacing: 0.4px; }
+  .amt-block .amt-value { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; color: var(--crimson); }
+  .amt-block.total .amt-value { color: var(--success); font-size: 1.5rem; }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
@@ -278,7 +316,56 @@
   .occasion-pill:hover { border-color: var(--crimson); transform: translateY(-4px); box-shadow: 0 8px 24px var(--shadow); }
   .occasion-pill.selected { border-color: var(--crimson); background: rgba(139,26,43,0.05); }
   .occasion-emoji { font-size: 2.5rem; display: block; margin-bottom: 0.8rem; }
+  .occasion-icon3d { width: 64px; height: 64px; object-fit: contain; display: block; margin: 0 auto 0.8rem; filter: drop-shadow(0 6px 10px rgba(139,26,43,0.25)); transition: transform 0.3s; }
+  .occasion-pill:hover .occasion-icon3d { transform: translateY(-4px) scale(1.06); }
   .occasion-name { font-family: 'Playfair Display', serif; font-size: 0.95rem; color: var(--dark); }
+
+  /* ─── 3D ICON helper (generic) ─── */
+  .icon3d { width: 1em; height: 1em; object-fit: contain; vertical-align: -0.15em; display: inline-block; }
+  .icon3d-lg { width: 46px; height: 46px; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2)); }
+
+  /* ─── STAGE TRACKER (booking lifecycle) ─── */
+  .stage-tracker { display: flex; flex-wrap: wrap; gap: 0; margin: 14px 0 4px; }
+  .stage-pt { flex: 1; min-width: 90px; text-align: center; position: relative; font-size: 0.66rem; letter-spacing: 0.3px; color: var(--muted); padding-top: 22px; }
+  .stage-pt::before { content:''; position:absolute; top:0; left:50%; transform:translateX(-50%); width:14px; height:14px; border-radius:50%; background:var(--white); border:2px solid rgba(201,150,42,0.35); z-index:2; }
+  .stage-pt::after { content:''; position:absolute; top:6px; left:-50%; width:100%; height:2px; background:rgba(201,150,42,0.25); z-index:1; }
+  .stage-pt:first-child::after { display:none; }
+  .stage-pt.done { color: var(--success); }
+  .stage-pt.done::before { background: var(--success); border-color: var(--success); }
+  .stage-pt.done::after { background: var(--success); }
+  .stage-pt.current { color: var(--crimson); font-weight: 700; }
+  .stage-pt.current::before { background: var(--crimson); border-color: var(--crimson); box-shadow: 0 0 0 4px rgba(139,26,43,0.15); }
+  .stage-pt.cancelled { color: var(--error); }
+  .stage-pt.cancelled::before { background: var(--error); border-color: var(--error); }
+
+  /* ─── Booking action panels ─── */
+  .stage-panel { margin-top: 14px; padding: 14px; border-radius: 8px; background: rgba(201,150,42,0.06); border: 1px dashed rgba(201,150,42,0.35); font-size: 0.85rem; color: var(--mid); }
+  .stage-panel b { color: var(--crimson); }
+  .qr-box { display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-top:10px; }
+  .qr-img { width:130px; height:130px; border-radius:8px; border:2px solid var(--gold); background:#fff; padding:6px; }
+  .upload-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+  .upload-row label.btn-mini, .stage-panel button, .stage-panel .btn-mini {
+    background: var(--crimson); color:#fff; border:none; padding:8px 14px; border-radius:6px;
+    font-size:0.78rem; cursor:pointer; letter-spacing:0.5px; display:inline-flex; align-items:center; gap:6px;
+  }
+  .stage-panel .btn-mini.outline { background:transparent; border:1px solid var(--crimson); color:var(--crimson); }
+  .stage-panel .btn-mini.ghost { background:transparent; border:1px solid var(--muted); color:var(--muted); }
+  .proof-thumb { width:70px; height:70px; object-fit:cover; border-radius:6px; border:2px solid var(--gold); margin-top:8px; }
+  .stage-panel input[type=number], .stage-panel input[type=text] { padding:8px; border:1px solid rgba(201,150,42,0.4); border-radius:6px; font-size:0.82rem; width:160px; }
+
+  /* ─── Printable Bill (letterhead) ─── */
+  .bill-doc { font-family: 'Lato', sans-serif; color:#222; padding: 30px; max-width: 720px; margin:0 auto; background:#fff; }
+  .bill-doc .bill-head { text-align:center; border-bottom: 3px double #8B1A2B; padding-bottom:14px; margin-bottom:18px; }
+  .bill-doc .bill-head h1 { font-family:'Playfair Display',serif; color:#8B1A2B; font-size:1.7rem; }
+  .bill-doc .bill-head p { font-size:0.8rem; color:#555; margin-top:4px; }
+  .bill-doc table { width:100%; border-collapse:collapse; margin:14px 0; font-size:0.85rem; }
+  .bill-doc th, .bill-doc td { border:1px solid #ccc; padding:8px 10px; text-align:left; }
+  .bill-doc th { background:#F5E6C8; }
+  .bill-doc .bill-total-row td { font-weight:700; background:#FDF8F0; }
+  .bill-doc .bill-seal { margin-top:50px; display:flex; justify-content:space-between; align-items:flex-end; }
+  .bill-doc .seal-box { text-align:center; }
+  .bill-doc .seal-circle { width:100px; height:100px; border:3px solid #8B1A2B; border-radius:50%; display:flex; align-items:center; justify-content:center; transform:rotate(-12deg); color:#8B1A2B; font-family:'Playfair Display',serif; font-size:0.72rem; font-weight:700; text-align:center; line-height:1.3; margin:0 auto 6px; opacity:0.85; }
+  .bill-doc .bill-print-btn { display:block; margin:20px auto 0; }
 
   /* ─── BOOKING FORM ─── */
   #page-booking { padding-top: 68px; }
@@ -507,6 +594,7 @@
   }
   .status-confirmed { background: rgba(46,125,79,0.1); color: var(--success); }
   .status-pending { background: rgba(201,150,42,0.15); color: var(--gold); }
+  .status-cancelled { background: rgba(192,57,43,0.12); color: var(--error); }
   .booking-amount { font-family: 'Playfair Display', serif; color: var(--crimson); font-size: 1.2rem; font-weight: 700; }
 
   /* ─── ADMIN PANEL ─── */
@@ -532,6 +620,97 @@
     box-shadow: 0 2px 12px rgba(0,0,0,0.06);
   }
   .admin-card h3 { font-family: 'Playfair Display', serif; color: var(--dark); font-size: 1.2rem; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(201,150,42,0.2); }
+
+  /* ─── Revenue analytics ─── */
+  .rev-tab {
+    border: 1px solid rgba(201,150,42,0.4); background: transparent; color: var(--mid);
+    padding: 6px 14px; border-radius: 20px; font-size: 0.78rem; cursor: pointer; transition: all 0.2s;
+  }
+  .rev-tab.active, .rev-tab:hover { background: var(--crimson); color: #fff; border-color: var(--crimson); }
+  .rev-summary { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 18px; }
+  @media(max-width:600px){ .rev-summary { grid-template-columns: 1fr; } }
+  .rev-stat { background: linear-gradient(135deg, rgba(201,150,42,0.08), rgba(139,26,43,0.05)); border: 1px solid rgba(201,150,42,0.25); border-radius: 10px; padding: 14px; text-align: center; }
+  .rev-stat .rev-stat-label { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; }
+  .rev-stat .rev-stat-val { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; color: var(--crimson); margin-top: 4px; }
+  .rev-chart { display: flex; align-items: flex-end; gap: 8px; height: 140px; padding: 10px 4px 0; overflow-x: auto; }
+  .rev-bar-wrap { display: flex; flex-direction: column; align-items: center; min-width: 42px; flex: 1; }
+  .rev-bar { width: 22px; border-radius: 4px 4px 0 0; background: linear-gradient(180deg, var(--gold), var(--crimson)); transition: height 0.4s; min-height: 2px; }
+  .rev-bar-label { font-size: 0.62rem; color: var(--muted); margin-top: 6px; text-align: center; white-space: nowrap; }
+  .rev-bar-amt { font-size: 0.62rem; color: var(--crimson); font-weight: 700; margin-bottom: 3px; }
+  .rev-table { width: 100%; border-collapse: collapse; margin-top: 18px; font-size: 0.82rem; }
+  .rev-table td { border-top: 1px solid rgba(201,150,42,0.15); padding: 7px 4px; }
+  .rev-table td:last-child { text-align: right; font-weight: 700; color: var(--crimson); }
+
+  /* ─── Service Providers / Vendors ─── */
+  .provider-form { display: grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); gap: 10px; }
+  .provider-form input, .provider-form select {
+    padding: 9px 10px; border: 1px solid rgba(201,150,42,0.4); border-radius: 6px; font-size: 0.82rem;
+    background: var(--white); color: var(--dark); font-family: 'Lato', sans-serif;
+  }
+  .provider-cat-group { margin-bottom: 1.2rem; }
+  .provider-cat-title { font-family: 'Playfair Display', serif; color: var(--crimson); font-size: 0.95rem; margin-bottom: 0.6rem; border-bottom: 1px dashed rgba(201,150,42,0.3); padding-bottom: 4px; }
+  .provider-item {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;
+    background: rgba(201,150,42,0.05); border: 1px solid rgba(201,150,42,0.2); border-radius: 8px;
+    padding: 10px 14px; margin-bottom: 8px; font-size: 0.82rem;
+  }
+  .provider-item .pv-info b { color: var(--dark); }
+  .provider-item .pv-info span { color: var(--muted); display: block; font-size: 0.74rem; margin-top: 2px; }
+  .provider-item .pv-del { background: none; border: none; color: var(--error); cursor: pointer; font-size: 1rem; }
+  .pv-file-label {
+    display: flex; align-items: center; gap: 6px; padding: 9px 10px; border: 1px dashed rgba(201,150,42,0.5);
+    border-radius: 6px; font-size: 0.78rem; cursor: pointer; color: var(--mid); background: var(--white);
+  }
+  .pv-file-label span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* ─── Vendor directory (avatars) ─── */
+  .vendor-cat-block { margin-bottom: 2.2rem; }
+  .vendor-cat-head { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
+  .cat-avatar {
+    width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.1rem; color: #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2); flex-shrink: 0;
+  }
+  .vendor-cat-head h3 { font-family: 'Playfair Display', serif; color: var(--dark); font-size: 1.15rem; }
+  .vendor-grid { display: flex; flex-wrap: wrap; gap: 26px; }
+  .vendor-avatar-wrap { display: flex; flex-direction: column; align-items: center; width: 92px; text-align: center; position: relative; }
+  .vendor-avatar {
+    width: 74px; height: 74px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.5rem; color: #fff; cursor: pointer;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25); border: 3px solid var(--gold); position: relative; transition: transform 0.25s;
+  }
+  .vendor-avatar:hover { transform: translateY(-4px) scale(1.05); }
+  .vendor-avatar .call-badge {
+    position: absolute; bottom: -3px; right: -3px; width: 24px; height: 24px; border-radius: 50%;
+    background: var(--success); border: 2px solid var(--white); display: flex; align-items: center; justify-content: center; font-size: 0.7rem;
+  }
+  .vendor-name-label { font-size: 0.74rem; margin-top: 8px; color: var(--dark); font-weight: 600; }
+  .vendor-tooltip {
+    position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%) translateY(-8px);
+    background: var(--crimson); color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 0.72rem;
+    white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 10;
+  }
+  .vendor-tooltip::after { content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%); border:5px solid transparent; border-top-color: var(--crimson); }
+  .vendor-avatar-wrap:hover .vendor-tooltip { opacity: 1; }
+
+  /* ─── Vendor detail modal ─── */
+  .vendor-modal-overlay {
+    position: fixed; inset: 0; background: rgba(20,10,5,0.6); z-index: 999; display: flex;
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .vendor-modal-box {
+    background: var(--white); border-radius: 14px; max-width: 420px; width: 100%; padding: 26px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.4); position: relative; max-height: 85vh; overflow-y: auto;
+  }
+  .vendor-modal-close { position: absolute; top: 12px; right: 16px; background: none; border: none; font-size: 1.3rem; color: var(--muted); cursor: pointer; }
+  .vendor-modal-avatar { width: 84px; height: 84px; border-radius: 50%; display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; font-weight:700; font-size:1.9rem; color:#fff; margin: 0 auto 12px; border: 3px solid var(--gold); }
+  .vendor-modal-box h3 { text-align: center; font-family: 'Playfair Display', serif; color: var(--dark); font-size: 1.3rem; }
+  .vendor-modal-box .v-cat { text-align: center; color: var(--muted); font-size: 0.78rem; margin-bottom: 14px; }
+  .v-detail-row { display: flex; justify-content: space-between; padding: 8px 0; border-top: 1px solid rgba(201,150,42,0.15); font-size: 0.85rem; }
+  .v-detail-row span:first-child { color: var(--muted); }
+  .v-attachments { display: flex; gap: 10px; margin-top: 14px; }
+  .v-attachments a { flex: 1; text-align: center; padding: 10px; border: 1px solid var(--gold); border-radius: 8px; font-size: 0.78rem; color: var(--crimson); text-decoration: none; font-weight: 600; }
+  .v-call-btn { display: block; text-align: center; background: var(--crimson); color: #fff; padding: 12px; border-radius: 8px; margin-top: 16px; text-decoration: none; font-weight: 700; }
   .price-row {
     display: flex; align-items: center; justify-content: space-between;
     padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.05);
@@ -605,8 +784,10 @@
     <button data-i18n="nav.facilities" onclick="showPage('facilities', this)">Facilities</button>
     <button data-i18n="nav.book" onclick="requireLogin('booking')">Book Now</button>
     <button data-i18n="nav.account" onclick="requireLogin('account')">My Account</button>
+    <button id="nav-vendors-btn" class="hidden" onclick="requireLogin('vendors')">Vendors</button>
   </div>
   <div class="nav-auth" id="nav-auth">
+    <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()" title="Toggle dark/light mode">🌙</button>
     <div class="nav-clock" id="nav-clock"><b id="nav-clock-time">--:--:--</b><span id="nav-clock-date">--</span></div>
     <select class="lang-select" id="lang-select" onchange="setLanguage(this.value)">
       <option value="en">English</option>
@@ -618,6 +799,7 @@
     <button class="btn-solid" data-i18n="nav.register" onclick="openModal('register')">Register</button>
   </div>
   <div class="nav-auth hidden" id="nav-user">
+    <button class="theme-toggle" id="theme-btn2" onclick="toggleTheme()" title="Toggle dark/light mode">🌙</button>
     <div class="nav-clock" id="nav-clock2"><b id="nav-clock-time2">--:--:--</b><span id="nav-clock-date2">--</span></div>
     <select class="lang-select" id="lang-select2" onchange="setLanguage(this.value)">
       <option value="en">English</option>
@@ -680,12 +862,31 @@
       <div class="section-line"></div>
     </div>
     <div class="occasions-grid">
-      <div class="occasion-pill"><span class="occasion-emoji">💍</span><div class="occasion-name" data-i18n="occ.wedding">Wedding</div></div>
-      <div class="occasion-pill"><span class="occasion-emoji">🎉</span><div class="occasion-name" data-i18n="occ.reception">Reception</div></div>
-      <div class="occasion-pill"><span class="occasion-emoji">👨‍👩‍👧‍👦</span><div class="occasion-name" data-i18n="occ.family">Family Function</div></div>
-      <div class="occasion-pill"><span class="occasion-emoji">🥻</span><div class="occasion-name" data-i18n="occ.halfsaree">Half Saree</div></div>
-      <div class="occasion-pill"><span class="occasion-emoji">👂</span><div class="occasion-name" data-i18n="occ.earpiercing">Ear Piercing</div></div>
-      <div class="occasion-pill"><span class="occasion-emoji">✨</span><div class="occasion-name" data-i18n="occ.others">Others</div></div>
+      <div class="occasion-pill"><img class="occasion-icon3d" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Ring/3D/ring_3d.png" onerror="this.outerHTML='<span class=\'occasion-emoji\'>💍</span>'" alt="Wedding"><div class="occasion-name" data-i18n="occ.wedding">Wedding</div></div>
+      <div class="occasion-pill"><img class="occasion-icon3d" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Party%20popper/3D/party_popper_3d.png" onerror="this.outerHTML='<span class=\'occasion-emoji\'>🎉</span>'" alt="Reception"><div class="occasion-name" data-i18n="occ.reception">Reception</div></div>
+      <div class="occasion-pill"><img class="occasion-icon3d" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Family/3D/family_3d.png" onerror="this.outerHTML='<span class=\'occasion-emoji\'>👨‍👩‍👧‍👦</span>'" alt="Family Function"><div class="occasion-name" data-i18n="occ.family">Family Function</div></div>
+      <div class="occasion-pill"><img class="occasion-icon3d" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Sari/3D/sari_3d.png" onerror="this.outerHTML='<span class=\'occasion-emoji\'>🥻</span>'" alt="Half Saree"><div class="occasion-name" data-i18n="occ.halfsaree">Half Saree</div></div>
+      <div class="occasion-pill"><img class="occasion-icon3d" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Ear/3D/ear_3d.png" onerror="this.outerHTML='<span class=\'occasion-emoji\'>👂</span>'" alt="Ear Piercing"><div class="occasion-name" data-i18n="occ.earpiercing">Ear Piercing</div></div>
+      <div class="occasion-pill"><img class="occasion-icon3d" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Sparkles/3D/sparkles_3d.png" onerror="this.outerHTML='<span class=\'occasion-emoji\'>✨</span>'" alt="Others"><div class="occasion-name" data-i18n="occ.others">Others</div></div>
+    </div>
+  </section>
+
+  <!-- Video Tour -->
+  <section style="padding:5rem 2rem; background: var(--champagne);">
+    <div class="section-header">
+      <span class="section-eyebrow">Take a</span>
+      <h2 class="section-title">Video Tour of the Mahal</h2>
+      <div class="section-line"></div>
+    </div>
+    <div style="max-width:800px;margin:2rem auto 0;border-radius:14px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,0.25);border:3px solid var(--gold);">
+      <div id="mahal-video-wrap" style="position:relative;padding-bottom:56.25%;height:0;cursor:pointer;background:#000;" onclick="playMahalVideo()">
+        <img src="https://img.youtube.com/vi/uk6CIhuiqcU/maxresdefault.jpg" onerror="this.src='https://img.youtube.com/vi/uk6CIhuiqcU/hqdefault.jpg'" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;" alt="Vijaya Ravi Mahal Video Tour">
+        <div style="position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.25);">
+          <div style="width:76px;height:76px;border-radius:50%;background:rgba(200,0,0,0.85);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,0.4);">
+            <div style="width:0;height:0;border-top:15px solid transparent;border-bottom:15px solid transparent;border-left:24px solid #fff;margin-left:6px;"></div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -905,34 +1106,16 @@
       <!-- STEP 4 -->
       <div id="bstep-4" class="hidden">
         <div class="form-section">
-          <div class="form-section-title">Confirm Your Booking</div>
+          <div class="form-section-title">Review Your Request</div>
           <div class="summary-box" id="final-summary"></div>
-        </div>
-        <div class="form-section" style="background:rgba(201,150,42,0.04);">
-          <div class="form-section-title">Payment Details</div>
-          <div class="form-grid">
-            <div class="form-group">
-              <label>Advance Amount Paid (₹)</label>
-              <input type="number" id="b-advance" placeholder="Advance amount">
-            </div>
-            <div class="form-group">
-              <label>Payment Mode</label>
-              <select id="b-payment">
-                <option>UPI</option>
-                <option>Bank Transfer</option>
-                <option>Cash</option>
-                <option>Cheque</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Transaction / Reference No.</label>
-              <input type="text" id="b-txn" placeholder="Transaction ID">
-            </div>
-          </div>
+          <p style="font-size:0.8rem;color:var(--muted);margin-top:10px;line-height:1.6;">
+            This sends a <b>date &amp; time request</b> to Vijaya Ravi Mahal. Our team will review it, confirm the final amount,
+            and you'll then accept the price and pay the advance from your <b>My Bookings</b> page — no payment is needed right now.
+          </p>
         </div>
         <div class="form-nav">
           <button class="btn-prev" onclick="goStep(3)">← Back</button>
-          <button class="btn-next" onclick="submitBooking()" style="background:linear-gradient(135deg,var(--success),#1A5C35);">✓ Confirm Booking</button>
+          <button class="btn-next" onclick="submitBooking()" style="background:linear-gradient(135deg,var(--success),#1A5C35);">✓ Submit Request</button>
         </div>
       </div>
     </div>
@@ -977,6 +1160,21 @@
   </div>
 </div>
 
+<!-- ════════════ VENDORS PAGE (visible only after advance payment) ════════════ -->
+<div id="page-vendors" class="page">
+  <div style="padding: 6rem 2rem 2rem; max-width: 1000px; margin: 0 auto;">
+    <div class="section-header">
+      <span class="section-eyebrow">Trusted</span>
+      <h2 class="section-title">Vendor Directory</h2>
+      <div class="section-line"></div>
+      <p style="text-align:center;color:var(--muted);font-size:0.85rem;max-width:520px;margin:0.8rem auto 0;">
+        Recommended service providers for your event. Hover a photo to see the number, tap to view full details.
+      </p>
+    </div>
+    <div id="vendors-directory" style="margin-top:2.5rem;"></div>
+  </div>
+</div>
+
 <!-- ════════════ ADMIN PAGE ════════════ -->
 <div id="page-admin" class="page">
   <div class="admin-hero">
@@ -989,6 +1187,20 @@
       <div class="kpi-card"><div class="kpi-label">This Month</div><div class="kpi-val" id="kpi-month">0</div><div class="kpi-sub">August 2026</div></div>
       <div class="kpi-card"><div class="kpi-label">Revenue (₹)</div><div class="kpi-val" id="kpi-rev">0</div><div class="kpi-sub">Total collected</div></div>
       <div class="kpi-card"><div class="kpi-label">Registered Users</div><div class="kpi-val" id="kpi-users">0</div><div class="kpi-sub">Accounts</div></div>
+    </div>
+
+    <div class="admin-card" style="margin-bottom:2rem;">
+      <h3 style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+        <span>Business Revenue</span>
+        <span style="display:flex;gap:6px;">
+          <button class="rev-tab active" id="rev-tab-weekly" onclick="setRevenueView('weekly')">Weekly</button>
+          <button class="rev-tab" id="rev-tab-monthly" onclick="setRevenueView('monthly')">Monthly</button>
+          <button class="rev-tab" id="rev-tab-yearly" onclick="setRevenueView('yearly')">Yearly</button>
+        </span>
+      </h3>
+      <div class="rev-summary" id="rev-summary"></div>
+      <div class="rev-chart" id="rev-chart"></div>
+      <table class="rev-table" id="rev-table"><tbody></tbody></table>
     </div>
 
     <div class="admin-grid">
@@ -1016,10 +1228,29 @@
       </div>
 
       <div class="admin-card" style="grid-column: 1 / -1;">
+        <h3>Service Providers / Vendors</h3>
+        <p style="font-size:0.8rem;color:var(--muted);margin-top:-1rem;margin-bottom:1.2rem;">
+          Add vendors for any service type with contact, cost, and business card / brochure attachments. Visible to customers only in the dedicated <b>Vendors</b> tab, and only after their advance payment is done.
+        </p>
+        <div class="provider-form">
+          <select id="pv-category"></select>
+          <input type="text" id="pv-name" placeholder="Provider / Vendor Name">
+          <input type="tel" id="pv-mobile" placeholder="Mobile Number">
+          <input type="number" id="pv-costday" placeholder="Cost per day (₹)">
+          <input type="number" id="pv-costunit" placeholder="Cost per unit (₹)">
+          <label class="pv-file-label">📇 Business Card<input type="file" accept="image/*" id="pv-card" style="display:none" onchange="pvFilePreview(this,'pv-card-name')"><span id="pv-card-name">No file chosen</span></label>
+          <label class="pv-file-label">📄 Brochure<input type="file" accept="image/*,application/pdf" id="pv-brochure" style="display:none" onchange="pvFilePreview(this,'pv-brochure-name')"><span id="pv-brochure-name">No file chosen</span></label>
+          <input type="text" id="pv-note" placeholder="Note (e.g. 3-6 course veg menu)" style="grid-column:1/-1;">
+          <button class="btn-save-prices" style="grid-column:1/-1;" onclick="addProvider(event)">+ Add Provider</button>
+        </div>
+        <div id="providers-list" style="margin-top:1.5rem;"></div>
+      </div>
+
+      <div class="admin-card" style="grid-column: 1 / -1;">
         <h3>All Bookings</h3>
         <div style="overflow-x:auto;">
           <table class="bookings-table" id="admin-bookings-table">
-            <thead><tr><th>Ref</th><th>User</th><th>Occasion</th><th>Date</th><th>Hall</th><th>Services</th><th>Total</th><th>Status</th></tr></thead>
+            <thead><tr><th>Ref</th><th>User</th><th>Occasion</th><th>Date</th><th>Hall</th><th>Services</th><th>Total</th><th>Status</th><th>Action</th></tr></thead>
             <tbody id="admin-bookings-body"></tbody>
           </table>
         </div>
@@ -1134,11 +1365,11 @@
 <!-- Success Overlay -->
 <div class="success-overlay hidden" id="success-overlay">
   <div class="success-box">
-    <div class="success-icon">🎊</div>
-    <h2 class="success-title">Booking Confirmed!</h2>
-    <p class="success-sub">Your celebration at Vijaya Ravi Mahal has been reserved successfully.</p>
+    <div class="success-icon"><img class="icon3d-lg" style="width:64px;height:64px;" src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/assets/Confetti%20ball/3D/confetti_ball_3d.png" onerror="this.outerHTML='🎊'" alt=""></div>
+    <h2 class="success-title">Request Submitted!</h2>
+    <p class="success-sub">Your date &amp; time request has been sent to Vijaya Ravi Mahal for review.</p>
     <div class="booking-ref" id="booking-ref-num">VRM-000001</div>
-    <p class="success-sub" style="font-size:0.8rem;">Please save your reference number. Our team will contact you within 24 hours.</p>
+    <p class="success-sub" style="font-size:0.8rem;">Please save your reference number. Our team will review and confirm your total amount shortly — track progress under My Bookings.</p>
     <br>
     <button class="btn-solid" style="padding:12px 30px;" onclick="closeSuccess()">Go to My Bookings</button>
   </div>
@@ -1193,8 +1424,29 @@ async function tursoInitSchema() {
         ref TEXT PRIMARY KEY, userId INTEGER, userName TEXT, userEmail TEXT,
         occasion TEXT, date TEXT, slot TEXT, hall TEXT, guests TEXT,
         rooms TEXT, services TEXT, total INTEGER, advance INTEGER,
-        payment TEXT, txn TEXT, status TEXT, bookedAt TEXT)` }
+        payment TEXT, txn TEXT, status TEXT, bookedAt TEXT)` },
+    { sql: `CREATE TABLE IF NOT EXISTS providers (
+        id TEXT PRIMARY KEY, category TEXT, name TEXT, mobile TEXT,
+        priceType TEXT, price INTEGER, minBudget INTEGER, maxBudget INTEGER,
+        note TEXT, createdAt TEXT)` }
   ]);
+  // ─── Migrations: add booking-lifecycle columns if this is an older table ───
+  const migrations = [
+    "ALTER TABLE bookings ADD COLUMN advanceRequired INTEGER",
+    "ALTER TABLE bookings ADD COLUMN advancePaid INTEGER",
+    "ALTER TABLE bookings ADD COLUMN proofData TEXT",
+    "ALTER TABLE bookings ADD COLUMN adminNote TEXT",
+    "ALTER TABLE bookings ADD COLUMN cancelReason TEXT",
+    "ALTER TABLE bookings ADD COLUMN checkoutBalance INTEGER",
+    "ALTER TABLE bookings ADD COLUMN checkoutAt TEXT",
+    "ALTER TABLE bookings ADD COLUMN history TEXT",
+    "ALTER TABLE bookings ADD COLUMN sharedProviders TEXT",
+    "ALTER TABLE providers ADD COLUMN businessCard TEXT",
+    "ALTER TABLE providers ADD COLUMN brochure TEXT",
+    "ALTER TABLE providers ADD COLUMN costPerDay INTEGER",
+    "ALTER TABLE providers ADD COLUMN costPerUnit INTEGER"
+  ];
+  for(const sql of migrations) { try { await tursoExec([{ sql }]); } catch(e) {} }
   return !!result;
 }
 
@@ -1202,7 +1454,8 @@ async function tursoInitSchema() {
 async function tursoSyncAll() {
   const result = await tursoExec([
     { sql: "SELECT * FROM users" },
-    { sql: "SELECT * FROM bookings" }
+    { sql: "SELECT * FROM bookings" },
+    { sql: "SELECT * FROM providers" }
   ]);
   if(!result || !result.results) return false;
   try {
@@ -1219,10 +1472,21 @@ async function tursoSyncAll() {
       ...b,
       rooms: JSON.parse(b.rooms || '{}'),
       services: JSON.parse(b.services || '[]'),
-      total: Number(b.total), advance: Number(b.advance)
+      history: (()=>{ try { return JSON.parse(b.history || '[]'); } catch(e){ return []; } })(),
+      sharedProviders: (()=>{ try { return JSON.parse(b.sharedProviders || '[]'); } catch(e){ return []; } })(),
+      total: Number(b.total)||0, advance: Number(b.advance)||0,
+      advanceRequired: Number(b.advanceRequired)||0, advancePaid: Number(b.advancePaid)||0,
+      checkoutBalance: Number(b.checkoutBalance)||0,
+      proofData: b.proofData || '', adminNote: b.adminNote || '', cancelReason: b.cancelReason || '',
+      checkoutAt: b.checkoutAt || ''
+    }));
+    const providersRaw = rowsToObjects(result.results[2]).map(p => ({
+      ...p, costPerDay: Number(p.costPerDay)||0, costPerUnit: Number(p.costPerUnit)||0,
+      businessCard: p.businessCard||'', brochure: p.brochure||''
     }));
     DB.set('users', usersRaw);
     DB.set('bookings', bookingsRaw);
+    DB.set('providers', providersRaw);
     return true;
   } catch(e) { console.warn('Turso sync parse failed', e); return false; }
 }
@@ -1243,16 +1507,42 @@ async function tursoUpdateUser(user) {
 
 async function tursoInsertBooking(b) {
   await tursoExec([{
-    sql: `INSERT INTO bookings (ref,userId,userName,userEmail,occasion,date,slot,hall,guests,rooms,services,total,advance,payment,txn,status,bookedAt)
-          VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+    sql: `INSERT INTO bookings (ref,userId,userName,userEmail,occasion,date,slot,hall,guests,rooms,services,total,advance,payment,txn,status,bookedAt,advanceRequired,advancePaid,proofData,adminNote,cancelReason,checkoutBalance,checkoutAt,history,sharedProviders)
+          VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     args: [b.ref,b.userId,b.userName,b.userEmail,b.occasion,b.date,b.slot,b.hall,b.guests,
            JSON.stringify(b.rooms), JSON.stringify(b.services), b.total, b.advance,
-           b.payment, b.txn, b.status, b.bookedAt]
+           b.payment, b.txn, b.status, b.bookedAt, b.advanceRequired||0, b.advancePaid||0,
+           b.proofData||'', b.adminNote||'', b.cancelReason||'', b.checkoutBalance||0,
+           b.checkoutAt||'', JSON.stringify(b.history||[]), JSON.stringify(b.sharedProviders||[])]
+  }]);
+}
+
+// Persist any in-flight stage/status changes for a booking back to Turso
+async function tursoUpdateBooking(b) {
+  await tursoExec([{
+    sql: `UPDATE bookings SET total=?, advance=?, payment=?, txn=?, status=?, advanceRequired=?,
+          advancePaid=?, proofData=?, adminNote=?, cancelReason=?, checkoutBalance=?, checkoutAt=?, history=?, sharedProviders=?
+          WHERE ref=?`,
+    args: [b.total, b.advance, b.payment, b.txn, b.status, b.advanceRequired||0,
+           b.advancePaid||0, b.proofData||'', b.adminNote||'', b.cancelReason||'',
+           b.checkoutBalance||0, b.checkoutAt||'', JSON.stringify(b.history||[]), JSON.stringify(b.sharedProviders||[]), b.ref]
   }]);
 }
 
 // Fetch fresh bookings for one date directly from Turso (used for the
 // double-booking check right before a booking is confirmed)
+async function tursoInsertProvider(pv) {
+  await tursoExec([{
+    sql: `INSERT INTO providers (id,category,name,mobile,businessCard,brochure,costPerDay,costPerUnit,note,createdAt)
+          VALUES (?,?,?,?,?,?,?,?,?,?)`,
+    args: [pv.id, pv.category, pv.name, pv.mobile, pv.businessCard||'', pv.brochure||'', pv.costPerDay||0, pv.costPerUnit||0, pv.note||'', new Date().toISOString()]
+  }]);
+}
+
+async function tursoDeleteProvider(id) {
+  await tursoExec([{ sql: "DELETE FROM providers WHERE id = ?", args: [id] }]);
+}
+
 async function tursoGetBookingsForDate(date) {
   const result = await tursoExec([{ sql: "SELECT ref,userId,slot FROM bookings WHERE date = ?", args: [date] }]);
   if(!result || !result.results) return null; // null = could not verify (offline)
@@ -1296,6 +1586,8 @@ const DB = {
     }
   },
   savePrices: (p) => DB.set('prices', p),
+  getProviders: () => DB.get('providers') || [],
+  saveProviders: (p) => DB.set('providers', p),
 };
 
 // Init admin
@@ -1486,6 +1778,7 @@ function showPage(page, btn) {
   if(page==='account') loadAccountPage();
   if(page==='admin') loadAdminPage();
   if(page==='booking') initBookingPage();
+  if(page==='vendors') loadVendorsPage();
 }
 
 function requireLogin(page) {
@@ -1568,14 +1861,29 @@ function setCurrentUser(user) {
   document.getElementById('nav-auth').classList.add('hidden');
   document.getElementById('nav-user').classList.remove('hidden');
   document.getElementById('nav-username').textContent = user.name.split(' ')[0];
+  refreshVendorsTabVisibility();
 }
 
 function logout() {
   currentUser = null;
   document.getElementById('nav-auth').classList.remove('hidden');
   document.getElementById('nav-user').classList.add('hidden');
+  document.getElementById('nav-vendors-btn').classList.add('hidden');
   showPage('home');
   toast('Logged out successfully');
+}
+
+// Vendors tab is only visible once the customer has at least one booking
+// where an advance payment has actually been made (Verifying onward).
+function userHasAdvancePaid(){
+  if(!currentUser) return false;
+  const eligible = ['Verifying','Confirmed','CheckoutPending','CheckoutVerifying','CheckedOut'];
+  return DB.getBookings().some(b => String(b.userId)===String(currentUser.id) && eligible.includes(b.status));
+}
+function refreshVendorsTabVisibility(){
+  const btn = document.getElementById('nav-vendors-btn');
+  if(!btn) return;
+  btn.classList.toggle('hidden', !userHasAdvancePaid());
 }
 
 // ─── Admin ───
@@ -1721,7 +2029,7 @@ function buildFinalSummary() {
   document.getElementById('final-summary').innerHTML = `
     <div class="summary-title">📋 Booking Summary</div>
     ${rows}
-    <div class="summary-total"><span>Grand Total</span><span>₹${total.toLocaleString()}</span></div>`;
+    <div class="summary-total"><span>Grand Total</span><span>${rupee(total)}</span></div>`;
 }
 
 async function submitBooking() {
@@ -1753,10 +2061,6 @@ async function submitBooking() {
     return;
   }
 
-  const advance = document.getElementById('b-advance').value;
-  const payment = document.getElementById('b-payment').value;
-  const txn = document.getElementById('b-txn').value;
-
   const ref = 'VRM-'+String(Date.now()).slice(-6);
   const booking = {
     ref, userId: currentUser.id, userName: currentUser.name,
@@ -1768,10 +2072,13 @@ async function submitBooking() {
     guests: bookingData.guests,
     rooms: {...roomCounts},
     services: Object.keys(selectedServices),
-    total: bookingData.total,
-    advance: advance || 0,
-    payment, txn,
-    status: 'Confirmed',
+    total: bookingData.total,       // estimated total shown to admin for review
+    advance: 0, advanceRequired: 0, advancePaid: 0,
+    payment: '', txn: '', proofData: '',
+    status: 'Requested',            // Requested → Priced → Accepted → Verifying → Confirmed → CancelRequested/Cancelled → CheckedOut
+    adminNote: '', cancelReason: '', checkoutBalance: 0, checkoutAt: '',
+    history: [{ stage:'Requested', at:new Date().toISOString(), note:'Date & time request submitted by customer.' }],
+    sharedProviders: [],
     bookedAt: new Date().toISOString()
   };
 
@@ -1780,7 +2087,7 @@ async function submitBooking() {
   DB.saveBookings(bookings);
   await tursoInsertBooking(booking); // persist to Turso
 
-  if(submitBtn) { submitBtn.disabled = false; submitBtn.textContent = '✓ Confirm Booking'; }
+  if(submitBtn) { submitBtn.disabled = false; submitBtn.textContent = '✓ Submit Request'; }
   document.getElementById('booking-ref-num').textContent = ref;
   document.getElementById('success-overlay').classList.remove('hidden');
 }
@@ -1807,18 +2114,259 @@ function loadAccountPage() {
     return;
   }
   list.innerHTML = bookings.reverse().map(b=>`
-    <div class="booking-card">
-      <div class="booking-card-info">
-        <h3>${b.occasion} – ${b.hall}</h3>
-        <p>📅 ${b.date} &nbsp;|&nbsp; ⏰ ${b.slot} &nbsp;|&nbsp; 👥 ${b.guests} Guests</p>
-        ${b.services.length ? '<p style="margin-top:4px;font-size:0.78rem;">Services: '+b.services.join(', ')+'</p>' : ''}
+    <div class="booking-card" style="flex-direction:column;align-items:stretch;">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <div class="booking-card-info">
+          <h3>${b.occasion} – ${hallName(b.hall)}</h3>
+          <p>📅 ${b.date} &nbsp;|&nbsp; ⏰ ${b.slot} &nbsp;|&nbsp; 👥 ${b.guests} Guests</p>
+          ${(b.services||[]).length ? '<p style="margin-top:4px;font-size:0.78rem;">Services: '+b.services.join(', ')+'</p>' : ''}
+        </div>
+        <div class="booking-card-meta">
+          <div class="booking-status ${statusClass(b.status)}">${statusLabel(b.status)}</div>
+          <div class="booking-amount">${rupee(b.total)}</div>
+          <div style="font-size:0.72rem;color:var(--muted);margin-top:4px;">${b.ref}</div>
+        </div>
       </div>
-      <div class="booking-card-meta">
-        <div class="booking-status status-confirmed">${b.status}</div>
-        <div class="booking-amount">₹${Number(b.total).toLocaleString()}</div>
-        <div style="font-size:0.72rem;color:var(--muted);margin-top:4px;">${b.ref}</div>
-      </div>
+      ${renderStageTracker(b.status)}
+      ${renderUserStagePanel(b)}
     </div>`).join('');
+}
+
+// ─── Helpers for booking lifecycle display ───
+function hallName(h){ return {grand:'Grand Banquet Hall', mini:'Mini Hall', garden:'Open Terrace Garden'}[h] || h; }
+function statusClass(s){
+  if(s==='Confirmed'||s==='CheckedOut') return 'status-confirmed';
+  if(s==='Cancelled') return 'status-cancelled';
+  return 'status-pending';
+}
+function statusLabel(s){
+  return { Requested:'Requested', Priced:'Price Confirmed', Accepted:'Awaiting Advance',
+    Verifying:'Verifying Payment', Confirmed:'Confirmed', CancelRequested:'Cancellation Requested',
+    Cancelled:'Cancelled', CheckoutPending:'Balance Due at Checkout', CheckoutVerifying:'Verifying Final Payment',
+    CheckedOut:'Checked Out' }[s] || s;
+}
+const STAGE_FLOW = [
+  { key:'Requested', label:'Requested' },
+  { key:'Priced', label:'Price Set' },
+  { key:'Accepted', label:'Accepted' },
+  { key:'Verifying', label:'Advance Paid' },
+  { key:'Confirmed', label:'Confirmed' },
+  { key:'CheckoutPending', label:'Balance Due' },
+  { key:'CheckoutVerifying', label:'Balance Paid' },
+  { key:'CheckedOut', label:'Checked Out' }
+];
+function renderStageTracker(status){
+  if(status==='Cancelled' || status==='CancelRequested') {
+    return `<div class="stage-tracker">
+      <div class="stage-pt done">Booked</div>
+      <div class="stage-pt ${status==='CancelRequested'?'current':'cancelled'}">Cancellation Requested</div>
+      ${status==='Cancelled' ? '<div class="stage-pt cancelled">Cancelled</div>' : ''}
+    </div>`;
+  }
+  const idx = STAGE_FLOW.findIndex(s=>s.key===status);
+  return `<div class="stage-tracker">${STAGE_FLOW.map((s,i)=>{
+    let cls = 'stage-pt';
+    if(i < idx) cls += ' done'; else if(i===idx) cls += ' current';
+    return `<div class="${cls}">${s.label}</div>`;
+  }).join('')}</div>`;
+}
+
+function findBooking(ref){ return DB.getBookings().find(b=>b.ref===ref); }
+async function persistBooking(b, note){
+  if(note) b.history = [...(b.history||[]), { stage:b.status, at:new Date().toISOString(), note }];
+  const bookings = DB.getBookings();
+  const idx = bookings.findIndex(x=>x.ref===b.ref);
+  if(idx>-1) bookings[idx] = b;
+  DB.saveBookings(bookings);
+  await tursoUpdateBooking(b);
+  refreshVendorsTabVisibility();
+}
+
+// Shared QR + camera/gallery/file upload collector, reused for both the advance
+// payment (Accepted stage) and the final balance payment (CheckoutPending stage).
+function renderPaymentCollector(ref, amount, purposeLabel, submitFnName){
+  return `
+      <div class="amt-block">
+        <span class="amt-label">${purposeLabel}</span>
+        <span class="amt-value">${rupee(amount)}</span>
+      </div>
+      <div class="qr-box">
+        <img class="qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=vijayaravimahal@upi%26pn=Vijaya%20Ravi%20Mahal%26am=${amount}%26cu=INR" onerror="this.style.display='none'" alt="UPI QR">
+        <div style="font-size:0.78rem;">Scan &amp; pay via any UPI app, then enter the transaction ID below and attach payment proof.</div>
+      </div>
+      <div class="upload-row" style="margin-top:12px;">
+        <input type="text" id="txn-${ref}" placeholder="Transaction / Reference No.">
+      </div>
+      <div class="upload-row">
+        <label class="btn-mini outline">📷 Camera <input type="file" accept="image/*" capture="environment" style="display:none" onchange="handleProofUpload(event,'${ref}')"></label>
+        <label class="btn-mini outline">🖼 Gallery <input type="file" accept="image/*" style="display:none" onchange="handleProofUpload(event,'${ref}')"></label>
+        <label class="btn-mini outline">📎 File <input type="file" accept="image/*,application/pdf" style="display:none" onchange="handleProofUpload(event,'${ref}')"></label>
+      </div>
+      <div id="proof-preview-${ref}"></div>
+      <div class="upload-row">
+        <button class="btn-mini" onclick="${submitFnName}('${ref}', ${amount})">✓ Submit Payment for Verification</button>
+      </div>`;
+}
+
+function renderUserStagePanel(b){
+  if(b.status==='Requested') {
+    return `<div class="stage-panel">⏳ Waiting for Vijaya Ravi Mahal to review your request and confirm the total amount. You'll be notified here once it's priced.</div>`;
+  }
+  if(b.status==='Priced') {
+    return `<div class="stage-panel">
+      <div class="amt-block total"><span class="amt-label">Total confirmed by venue</span><span class="amt-value">${rupee(b.total)}</span></div>
+      ${b.adminNote?`<span style="font-size:0.78rem;">Note: ${b.adminNote}</span>`:''}
+      <div class="upload-row">
+        <button class="btn-mini" onclick="userAcceptPrice('${b.ref}')">✓ Accept &amp; Continue</button>
+        <button class="btn-mini ghost" onclick="userRequestCancel('${b.ref}')">Decline / Cancel</button>
+      </div>
+    </div>`;
+  }
+  if(b.status==='Accepted') {
+    const adv = b.advanceRequired || Math.round(b.total*0.3);
+    return `<div class="stage-panel">
+      ${renderPaymentCollector(b.ref, adv, 'Advance to confirm your date', 'submitAdvanceProof')}
+      <div class="upload-row">
+        <button class="btn-mini ghost" onclick="userRequestCancel('${b.ref}')">Cancel Booking</button>
+      </div>
+    </div>`;
+  }
+  if(b.status==='Verifying') {
+    return `<div class="stage-panel">🔎 Your advance payment (${rupee(b.advancePaid)}, Txn: ${b.txn||'-'}) is being verified by the venue admin. This usually takes a few hours.</div>`;
+  }
+  if(b.status==='Confirmed') {
+    const balance = Math.max(0, Number(b.total) - Number(b.advancePaid||0));
+    return `<div class="stage-panel">✅ <b>Booking Confirmed!</b>
+      <div class="amt-block"><span class="amt-label">Advance paid</span><span class="amt-value">${rupee(b.advancePaid)}</span></div>
+      <div class="amt-block"><span class="amt-label">Balance due on event day</span><span class="amt-value">${rupee(balance)}</span></div>
+      <div class="upload-row">
+        <button class="btn-mini outline" onclick="openBill('${b.ref}','advance')">🧾 View Advance Receipt</button>
+        <button class="btn-mini ghost" onclick="userRequestCancel('${b.ref}')">Request Cancellation</button>
+      </div>
+      <div style="font-size:0.72rem;margin-top:6px;color:var(--muted);">Note: cancellations after confirmation are non-refundable and require admin approval on valid grounds.</div>
+    </div>`;
+  }
+  if(b.status==='CheckoutPending') {
+    const balance = Math.max(0, Number(b.total) - Number(b.advancePaid||0));
+    return `<div class="stage-panel">
+      <b>Final checkout — please clear your balance to receive the settled bill.</b>
+      ${renderPaymentCollector(b.ref, balance, 'Balance due at checkout', 'submitCheckoutProof')}
+    </div>`;
+  }
+  if(b.status==='CheckoutVerifying') {
+    return `<div class="stage-panel">🔎 Your final balance payment (${rupee(b.checkoutBalance)}, Txn: ${b.txn||'-'}) is being verified by the venue admin. Your settled bill will be generated right after.</div>`;
+  }
+  if(b.status==='CancelRequested') {
+    return `<div class="stage-panel">⚠️ Your cancellation request is pending admin review. ${b.cancelReason?('Reason given: '+b.cancelReason):''} Cancellations are non-refundable and approved only for valid reasons.</div>`;
+  }
+  if(b.status==='Cancelled') {
+    return `<div class="stage-panel">❌ This booking was cancelled.${b.adminNote?(' Admin note: '+b.adminNote):''} No refund was issued as per policy.</div>`;
+  }
+  if(b.status==='CheckedOut') {
+    return `<div class="stage-panel">🏁 Event completed &amp; bill settled on ${(b.checkoutAt||'').split('T')[0]||''}.
+      <div class="upload-row">
+        <button class="btn-mini outline" onclick="openBill('${b.ref}','final')">🧾 View Final Bill</button>
+      </div>
+    </div>`;
+  }
+  return '';
+}
+
+// ─── Video Tour: click-to-play thumbnail (avoids YouTube iframe config errors on file:// pages) ───
+function playMahalVideo(){
+  const wrap = document.getElementById('mahal-video-wrap');
+  if(!wrap) return;
+  wrap.style.cursor = 'default';
+  wrap.onclick = null;
+  wrap.innerHTML = `<iframe src="https://www.youtube.com/embed/uk6CIhuiqcU?autoplay=1&rel=0" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" title="Vijaya Ravi Mahal Video Tour" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen onerror="window.open('${MAHAL_VIDEO_URL}','_blank')"></iframe>`;
+}
+
+// ─── Theme (dark / light) ───
+function toggleTheme(){
+  const isDark = document.body.classList.toggle('dark-mode');
+  localStorage.setItem('vrm-theme', isDark ? 'dark' : 'light');
+  updateThemeIcon(isDark);
+}
+function updateThemeIcon(isDark){
+  const icon = isDark ? '☀️' : '🌙';
+  const b1 = document.getElementById('theme-btn'); if(b1) b1.textContent = icon;
+  const b2 = document.getElementById('theme-btn2'); if(b2) b2.textContent = icon;
+}
+(function initTheme(){
+  const saved = localStorage.getItem('vrm-theme');
+  const isDark = saved === 'dark';
+  if(isDark) document.body.classList.add('dark-mode');
+  document.addEventListener('DOMContentLoaded', ()=>updateThemeIcon(isDark));
+})();
+
+// Format an amount as a styled ₹ badge (rupee symbol + value, distinct typography)
+function rupee(n){
+  return `<span class="amt-badge"><span class="rupee-sym">₹</span>${Number(n||0).toLocaleString('en-IN')}</span>`;
+}
+
+function handleProofUpload(evt, ref){
+  const file = evt.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    window['proofData_'+ref] = reader.result;
+    const prev = document.getElementById('proof-preview-'+ref);
+    if(prev) prev.innerHTML = file.type.startsWith('image/')
+      ? `<img class="proof-thumb" src="${reader.result}" alt="Proof attached">`
+      : `<div style="font-size:0.78rem;margin-top:6px;">📎 ${file.name} attached</div>`;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function userAcceptPrice(ref){
+  const b = findBooking(ref);
+  if(!b) return;
+  b.status = 'Accepted';
+  b.advanceRequired = b.advanceRequired || Math.round(b.total*0.3);
+  await persistBooking(b, 'Customer accepted the confirmed total amount.');
+  toast('Price accepted — please pay the advance to confirm your date.','success');
+  loadAccountPage();
+}
+
+async function submitAdvanceProof(ref, adv){
+  const b = findBooking(ref);
+  if(!b) return;
+  const txn = document.getElementById('txn-'+ref)?.value || '';
+  const proof = window['proofData_'+ref] || '';
+  if(!txn) { toast('Please enter the transaction / reference number.','error'); return; }
+  if(!proof) { toast('Please attach a payment proof (photo, gallery image or file).','error'); return; }
+  b.txn = txn; b.proofData = proof; b.advancePaid = adv; b.advance = adv; b.payment = 'UPI';
+  b.status = 'Verifying';
+  await persistBooking(b, 'Advance payment submitted with proof, awaiting admin verification.');
+  toast('Payment submitted for verification ✓','success');
+  loadAccountPage();
+}
+
+async function submitCheckoutProof(ref, balance){
+  const b = findBooking(ref);
+  if(!b) return;
+  const txn = document.getElementById('txn-'+ref)?.value || '';
+  const proof = window['proofData_'+ref] || '';
+  if(!txn) { toast('Please enter the transaction / reference number.','error'); return; }
+  if(!proof) { toast('Please attach a payment proof (photo, gallery image or file).','error'); return; }
+  b.txn = txn; b.proofData = proof; b.checkoutBalance = balance;
+  b.status = 'CheckoutVerifying';
+  await persistBooking(b, 'Final balance payment submitted with proof, awaiting admin verification.');
+  toast('Balance payment submitted for verification ✓','success');
+  loadAccountPage();
+}
+
+async function userRequestCancel(ref){
+  const reason = prompt('Please tell us the reason for cancellation (required — admin will only approve for valid reasons):');
+  if(reason===null) return;
+  if(!reason.trim()) { toast('A reason is required to request cancellation.','error'); return; }
+  const b = findBooking(ref);
+  if(!b) return;
+  b.cancelReason = reason.trim();
+  b.status = 'CancelRequested';
+  await persistBooking(b, 'Customer requested cancellation: '+reason.trim());
+  toast('Cancellation request sent to admin.','success');
+  loadAccountPage();
 }
 
 function accTab(tab, btn) {
@@ -1850,8 +2398,11 @@ function loadAdminPage() {
 
   document.getElementById('kpi-total').textContent = bookings.length;
   document.getElementById('kpi-month').textContent = bookings.filter(b=>new Date(b.bookedAt).getMonth()===now.getMonth()).length;
-  document.getElementById('kpi-rev').textContent = '₹'+bookings.reduce((s,b)=>s+Number(b.advance||0),0).toLocaleString();
+  document.getElementById('kpi-rev').textContent = '₹'+getRevenueEvents().reduce((s,e)=>s+e.amount,0).toLocaleString();
   document.getElementById('kpi-users').textContent = users.length;
+  renderRevenue();
+  populateProviderCategories();
+  renderProviders();
 
   // Bookings table
   const tbody = document.getElementById('admin-bookings-body');
@@ -1861,12 +2412,13 @@ function loadAdminPage() {
       <td>${b.userName}</td>
       <td>${b.occasion}</td>
       <td>${b.date}</td>
-      <td>${b.hall}</td>
+      <td>${hallName(b.hall)}</td>
       <td>${(b.services||[]).length} services</td>
-      <td><b style="color:var(--gold);">₹${Number(b.total).toLocaleString()}</b></td>
-      <td><span class="booking-status status-confirmed">${b.status}</span></td>
+      <td>${rupee(b.total)}</td>
+      <td><span class="booking-status ${statusClass(b.status)}">${statusLabel(b.status)}</span></td>
+      <td>${renderAdminActions(b)}</td>
     </tr>`).join('')
-  : '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--muted);">No bookings yet</td></tr>';
+  : '<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--muted);">No bookings yet</td></tr>';
 
   // Load prices into admin inputs
   const p = DB.getPrices();
@@ -1884,6 +2436,486 @@ function loadAdminPage() {
       <span class="price-label">${s.name}</span>
       <div class="price-input-wrap"><span>₹</span><input class="price-input" type="number" id="sp-${key}" value="${s.price}" style="width:90px;"></div>
     </div>`).join('');
+}
+
+// ─── Admin: per-stage actions ───
+function renderAdminActions(b){
+  const btn = (label,fn,cls='') => `<button class="btn-mini ${cls}" style="padding:5px 9px;font-size:0.68rem;margin:2px;" onclick="${fn}">${label}</button>`;
+  let main = '';
+  if(b.status==='Requested') main = btn('💰 Set Total','adminSetTotal(\''+b.ref+'\')');
+  else if(b.status==='Priced') main = `<span style="font-size:0.7rem;color:var(--muted);">Awaiting customer</span>`;
+  else if(b.status==='Accepted') main = `<span style="font-size:0.7rem;color:var(--muted);">Awaiting advance</span>`;
+  else if(b.status==='Verifying') main = btn('🔎 Verify Proof','adminReviewProof(\''+b.ref+'\')');
+  else if(b.status==='Confirmed') main = btn('🏁 Request Checkout','adminInitiateCheckout(\''+b.ref+'\')');
+  else if(b.status==='CheckoutPending') main = `<span style="font-size:0.7rem;color:var(--muted);">Awaiting balance payment</span>`;
+  else if(b.status==='CheckoutVerifying') main = btn('🔎 Verify Final Payment','adminReviewCheckoutProof(\''+b.ref+'\')');
+  else if(b.status==='CancelRequested') main = btn('⚖️ Review Cancellation','adminReviewCancel(\''+b.ref+'\')','outline');
+  else if(b.status==='CheckedOut') main = btn('🧾 Final Bill','openBill(\''+b.ref+'\',"final")','ghost');
+  else if(b.status==='Cancelled') main = `<span style="font-size:0.7rem;color:var(--muted);">Closed</span>`;
+  return main;
+}
+
+async function adminSetTotal(ref){
+  const b = findBooking(ref);
+  if(!b) return;
+  const val = prompt(`Confirm total amount for ${b.ref} (customer's requested estimate: ₹${Number(b.total).toLocaleString()}):`, b.total);
+  if(val===null) return;
+  const total = Number(val);
+  if(!total || total<=0) { toast('Enter a valid amount.','error'); return; }
+  const note = prompt('Optional note to customer about this price (leave blank to skip):','') || '';
+  b.total = total;
+  b.adminNote = note;
+  b.advanceRequired = Math.round(total*0.3);
+  b.status = 'Priced';
+  await persistBooking(b, `Admin confirmed total amount ₹${total.toLocaleString()}.`);
+  toast('Total confirmed — customer will be asked to accept.','success');
+  loadAdminPage();
+}
+
+function adminReviewProof(ref){
+  const b = findBooking(ref);
+  if(!b) return;
+  const win = window.open('', '_blank', 'width=480,height=640');
+  win.document.write(`
+    <html><head><title>Payment Proof - ${b.ref}</title>
+    <style>body{font-family:sans-serif;padding:20px;text-align:center;background:#f7f2ea;}
+    img{max-width:100%;border-radius:8px;border:2px solid #C9962A;margin-top:12px;}
+    h3{color:#8B1A2B;} button{margin:10px 6px;padding:10px 18px;border:none;border-radius:6px;font-size:0.9rem;cursor:pointer;}
+    .ok{background:#2E7D4F;color:#fff;} .no{background:#C0392B;color:#fff;}</style></head>
+    <body>
+      <h3>${b.ref} — ${b.userName}</h3>
+      <p>Advance: ₹${Number(b.advancePaid).toLocaleString()} &nbsp;|&nbsp; Txn: ${b.txn||'-'}</p>
+      ${b.proofData ? (b.proofData.startsWith('data:image') ? `<img src="${b.proofData}">` : `<p><a href="${b.proofData}" target="_blank">Open attached file</a></p>`) : '<p>No proof attached</p>'}
+      <br>
+      <button class="ok" onclick="window.opener.adminVerifyPayment('${b.ref}');window.close();">✓ Verify &amp; Confirm Booking</button>
+      <button class="no" onclick="window.opener.adminRejectProof('${b.ref}');window.close();">✗ Reject Proof</button>
+    </body></html>`);
+}
+
+async function adminVerifyPayment(ref){
+  const b = findBooking(ref);
+  if(!b) return;
+  b.status = 'Confirmed';
+  await persistBooking(b, `Admin verified advance payment of ₹${Number(b.advancePaid).toLocaleString()}. Booking confirmed.`);
+  toast('Booking confirmed ✓','success');
+  loadAdminPage();
+}
+
+async function adminRejectProof(ref){
+  const b = findBooking(ref);
+  if(!b) return;
+  const note = prompt('Reason for rejecting this payment proof:','') || 'Proof unclear / unverifiable';
+  b.status = 'Accepted';
+  b.adminNote = note;
+  await persistBooking(b, 'Admin rejected payment proof: '+note);
+  toast('Proof rejected — customer asked to resubmit.','success');
+  loadAdminPage();
+}
+
+async function adminReviewCancel(ref){
+  const b = findBooking(ref);
+  if(!b) return;
+  const ok = confirm(`Customer's reason: "${b.cancelReason}"\n\nApprove this cancellation? (No refund will be issued — approve only if the reason is valid.)`);
+  if(!ok) return;
+  const note = prompt('Admin note (why approved):', 'Valid reason accepted, no refund per policy.') || '';
+  b.status = 'Cancelled';
+  b.adminNote = note;
+  await persistBooking(b, 'Admin approved cancellation: '+note);
+  toast('Cancellation approved.','success');
+  loadAdminPage();
+}
+
+// Step 1 of checkout: admin asks the customer to pay the remaining balance
+// (same QR + camera/gallery/file attachment flow as the advance payment).
+async function adminInitiateCheckout(ref){
+  const b = findBooking(ref);
+  if(!b) return;
+  const balance = Math.max(0, Number(b.total) - Number(b.advancePaid||0));
+  b.status = 'CheckoutPending';
+  await persistBooking(b, `Admin requested final balance of ₹${balance.toLocaleString()} at checkout.`);
+  toast('Customer asked to pay the balance via QR to complete checkout.','success');
+  loadAdminPage();
+}
+
+// Step 2: admin reviews the balance-payment proof the customer attached, same as advance review.
+function adminReviewCheckoutProof(ref){
+  const b = findBooking(ref);
+  if(!b) return;
+  const win = window.open('', '_blank', 'width=480,height=640');
+  win.document.write(`
+    <html><head><title>Final Payment Proof - ${b.ref}</title>
+    <style>body{font-family:sans-serif;padding:20px;text-align:center;background:#f7f2ea;}
+    img{max-width:100%;border-radius:8px;border:2px solid #C9962A;margin-top:12px;}
+    h3{color:#8B1A2B;} button{margin:10px 6px;padding:10px 18px;border:none;border-radius:6px;font-size:0.9rem;cursor:pointer;}
+    .ok{background:#2E7D4F;color:#fff;} .no{background:#C0392B;color:#fff;}</style></head>
+    <body>
+      <h3>${b.ref} — ${b.userName}</h3>
+      <p>Balance: ₹${Number(b.checkoutBalance).toLocaleString()} &nbsp;|&nbsp; Txn: ${b.txn||'-'}</p>
+      ${b.proofData ? (b.proofData.startsWith('data:image') ? `<img src="${b.proofData}">` : `<p><a href="${b.proofData}" target="_blank">Open attached file</a></p>`) : '<p>No proof attached</p>'}
+      <br>
+      <button class="ok" onclick="window.opener.adminVerifyCheckout('${b.ref}');window.close();">✓ Verify &amp; Generate Bill</button>
+      <button class="no" onclick="window.opener.adminRejectCheckoutProof('${b.ref}');window.close();">✗ Reject Proof</button>
+    </body></html>`);
+}
+
+// Step 3: once verified, checkout completes and the final letterhead bill is generated.
+async function adminVerifyCheckout(ref){
+  const b = findBooking(ref);
+  if(!b) return;
+  b.checkoutAt = new Date().toISOString();
+  b.status = 'CheckedOut';
+  await persistBooking(b, `Admin verified final balance ₹${Number(b.checkoutBalance).toLocaleString()}. Bill fully cleared.`);
+  toast('Checkout verified — final bill generated ✓','success');
+  loadAdminPage();
+  openBill(ref, 'final');
+}
+
+async function adminRejectCheckoutProof(ref){
+  const b = findBooking(ref);
+  if(!b) return;
+  const note = prompt('Reason for rejecting this payment proof:','') || 'Proof unclear / unverifiable';
+  b.status = 'CheckoutPending';
+  b.adminNote = note;
+  await persistBooking(b, 'Admin rejected final payment proof: '+note);
+  toast('Proof rejected — customer asked to resubmit.','success');
+  loadAdminPage();
+}
+
+// ─── Printable letterhead bill (advance receipt / final settlement) ───
+const MAHAL_VIDEO_URL = 'https://youtu.be/uk6CIhuiqcU?si=WOI0DcgXhFGYUZ3I';
+
+// A circular "rubber stamp" seal built with SVG text-on-path — reads
+// "VIJAYA RAVI MAHAL" curved around the top and "POLUR • TIRUVANNAMALAI" along the bottom.
+function sealSVG(){
+  return `
+  <svg viewBox="0 0 200 200" width="140" height="140">
+    <defs>
+      <path id="topArc" d="M 20,100 A 80,80 0 0 1 180,100" />
+      <path id="botArc" d="M 30,130 A 70,70 0 0 0 170,130" />
+    </defs>
+    <circle cx="100" cy="100" r="92" fill="none" stroke="#8B1A2B" stroke-width="3"/>
+    <circle cx="100" cy="100" r="80" fill="none" stroke="#8B1A2B" stroke-width="1.5"/>
+    <text font-family="Playfair Display, serif" font-size="15" font-weight="700" fill="#8B1A2B" letter-spacing="2">
+      <textPath href="#topArc" startOffset="50%" text-anchor="middle">★ VIJAYA RAVI MAHAL ★</textPath>
+    </text>
+    <text font-family="Lato, sans-serif" font-size="9" fill="#8B1A2B" letter-spacing="1.5">
+      <textPath href="#botArc" startOffset="50%" text-anchor="middle">POLUR • TIRUVANNAMALAI</textPath>
+    </text>
+    <text x="100" y="95" font-family="Great Vibes, cursive" font-size="26" fill="#8B1A2B" text-anchor="middle">Vijaya Ravi</text>
+    <text x="100" y="115" font-family="Lato, sans-serif" font-size="8" fill="#8B1A2B" text-anchor="middle" letter-spacing="1">AUTHORIZED SIGNATORY</text>
+  </svg>`;
+}
+
+function openBill(ref, type){
+  const b = findBooking(ref);
+  if(!b) return;
+  const today = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'long', year:'numeric' });
+  const balance = Math.max(0, Number(b.total) - Number(b.advancePaid||0));
+  const inr = n => '<span style="color:#C9962A;font-weight:600;font-size:0.85em;">₹</span>' + Number(n||0).toLocaleString('en-IN');
+  const rows = type==='advance' ? `
+      <tr><td>Total Package Amount</td><td class="amt-cell">${inr(b.total)}</td></tr>
+      <tr><td>Advance Received (Txn: ${b.txn||'-'})</td><td class="amt-cell">${inr(b.advancePaid)}</td></tr>
+      <tr class="bill-total-row"><td>Balance Payable on Event Day</td><td class="amt-cell">${inr(balance)}</td></tr>` : `
+      <tr><td>Total Package Amount</td><td class="amt-cell">${inr(b.total)}</td></tr>
+      <tr><td>Advance Paid (Txn: ${b.txn||'-'})</td><td class="amt-cell">${inr(b.advancePaid)}</td></tr>
+      <tr><td>Balance Cleared at Checkout</td><td class="amt-cell">${inr(b.checkoutBalance)}</td></tr>
+      <tr class="bill-total-row"><td>Bill Status</td><td class="amt-cell" style="color:#2E7D4F;">FULLY SETTLED ✓</td></tr>`;
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html><head><title>${type==='advance'?'Advance Receipt':'Final Bill'} - ${b.ref}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Great+Vibes&family=Lato&display=swap" rel="stylesheet">
+    <style>
+      body{margin:0;background:#eee;} @media print { body{background:#fff;} .bill-print-btn,.bill-video-link{display:none;} }
+      .bill-doc { font-family:'Lato',sans-serif; color:#222; padding:30px; max-width:720px; margin:20px auto; background:#fff; box-shadow:0 0 20px rgba(0,0,0,0.1); border:1px solid #eadfca; }
+      .bill-doc .bill-head { text-align:center; border-bottom:3px double #8B1A2B; padding-bottom:14px; margin-bottom:18px; }
+      .bill-doc .bill-head h1 { font-family:'Playfair Display',serif; color:#8B1A2B; font-size:1.9rem; margin:0; }
+      .bill-doc .bill-head p { font-size:0.8rem; color:#555; margin-top:6px; }
+      .bill-doc table { width:100%; border-collapse:collapse; margin:14px 0; font-size:0.9rem; }
+      .bill-doc th, .bill-doc td { border:1px solid #ccc; padding:9px 12px; text-align:left; }
+      .bill-doc th { background:#F5E6C8; }
+      .amt-cell { text-align:right; font-family:'Playfair Display',serif; font-weight:700; color:#8B1A2B; }
+      .bill-doc .bill-total-row td { font-weight:700; background:#FDF8F0; font-size:1.05rem; }
+      .bill-doc .bill-seal { margin-top:50px; display:flex; justify-content:space-between; align-items:center; }
+      .bill-video-link { display:inline-flex; align-items:center; gap:8px; margin-top:22px; padding:10px 16px; background:#fdecec; border:1px solid #e1a6a6; border-radius:8px; text-decoration:none; color:#8B1A2B; font-size:0.82rem; font-weight:700; }
+      .bill-print-btn { display:block; margin:20px auto 30px; padding:10px 26px; background:#8B1A2B; color:#fff; border:none; border-radius:6px; font-size:0.9rem; cursor:pointer; }
+    </style></head>
+    <body>
+      <div class="bill-doc">
+        <div class="bill-head">
+          <h1>Vijaya Ravi Mahal</h1>
+          <p>Ernamanagalam, Cheugam to Polur High Way, Polur, Tiruvannamalai&nbsp;-&nbsp;606908</p>
+          <p><b>${type==='advance' ? 'ADVANCE PAYMENT RECEIPT' : 'FINAL SETTLEMENT BILL'}</b></p>
+        </div>
+        <table>
+          <tr><th>Booking Ref</th><td>${b.ref}</td></tr>
+          <tr><th>Customer Name</th><td>${b.userName}</td></tr>
+          <tr><th>Occasion</th><td>${b.occasion}</td></tr>
+          <tr><th>Event Date &amp; Time</th><td>${b.date} — ${b.slot}</td></tr>
+          <tr><th>Hall</th><td>${hallName(b.hall)}</td></tr>
+          <tr><th>Guests</th><td>${b.guests}</td></tr>
+          ${(b.services||[]).length? `<tr><th>Services</th><td>${b.services.join(', ')}</td></tr>`:''}
+        </table>
+        <table>
+          <tr><th>Description</th><th style="text-align:right;">Amount</th></tr>
+          ${rows}
+        </table>
+        <div class="bill-seal">
+          <div>Date: <b>${today}</b></div>
+          <div style="text-align:center;">
+            ${sealSVG()}
+          </div>
+        </div>
+      </div>
+      <button class="bill-print-btn" onclick="window.print()">🖨 Print / Save as PDF</button>
+    </body></html>`);
+  win.document.close();
+}
+
+// ─── Revenue analytics (weekly / monthly / yearly) ───
+let currentRevView = 'weekly';
+function setRevenueView(view){
+  currentRevView = view;
+  ['weekly','monthly','yearly'].forEach(v=>{
+    document.getElementById('rev-tab-'+v).classList.toggle('active', v===view);
+  });
+  renderRevenue();
+}
+
+// Money actually collected: advance once submitted-for-verification onward, plus
+// the final balance once checkout is fully cleared. Each is timestamped from history.
+function getRevenueEvents(){
+  const bookings = DB.getBookings();
+  const events = [];
+  bookings.forEach(b=>{
+    const collectedAdvance = ['Verifying','Confirmed','CheckoutPending','CheckoutVerifying','CheckedOut'].includes(b.status);
+    if(collectedAdvance && Number(b.advancePaid)>0){
+      const h = (b.history||[]).find(x=>x.stage==='Verifying');
+      events.push({ date: new Date(h ? h.at : b.bookedAt), amount: Number(b.advancePaid), ref: b.ref });
+    }
+    if(b.status==='CheckedOut' && Number(b.checkoutBalance)>0){
+      events.push({ date: new Date(b.checkoutAt || b.bookedAt), amount: Number(b.checkoutBalance), ref: b.ref });
+    }
+  });
+  return events;
+}
+
+function weekLabel(d){
+  const start = new Date(d); start.setDate(d.getDate()-d.getDay());
+  const end = new Date(start); end.setDate(start.getDate()+6);
+  const fmt = x => x.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+  return { key: start.toISOString().slice(0,10), label: `${fmt(start)}–${fmt(end)}` };
+}
+function monthLabel(d){
+  return { key: d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'), label: d.toLocaleDateString('en-IN',{month:'short',year:'numeric'}) };
+}
+function yearLabel(d){ return { key: String(d.getFullYear()), label: String(d.getFullYear()) }; }
+
+function renderRevenue(){
+  const events = getRevenueEvents();
+  const bucketFn = currentRevView==='weekly' ? weekLabel : currentRevView==='monthly' ? monthLabel : yearLabel;
+  const buckets = {};
+  events.forEach(e=>{
+    const { key, label } = bucketFn(e.date);
+    if(!buckets[key]) buckets[key] = { label, amount: 0 };
+    buckets[key].amount += e.amount;
+  });
+  let keys = Object.keys(buckets).sort();
+  const periodsToShow = currentRevView==='weekly' ? 8 : currentRevView==='monthly' ? 12 : 6;
+  keys = keys.slice(-periodsToShow);
+
+  const totalAll = events.reduce((s,e)=>s+e.amount,0);
+  const currentAmt = keys.length ? buckets[keys[keys.length-1]].amount : 0;
+  const prevAmt = keys.length>1 ? buckets[keys[keys.length-2]].amount : 0;
+  const growth = prevAmt>0 ? Math.round(((currentAmt-prevAmt)/prevAmt)*100) : (currentAmt>0?100:0);
+  const periodWord = currentRevView==='weekly'?'This Week':currentRevView==='monthly'?'This Month':'This Year';
+
+  document.getElementById('rev-summary').innerHTML = `
+    <div class="rev-stat"><div class="rev-stat-label">Total Revenue (All Time)</div><div class="rev-stat-val">${rupee(totalAll)}</div></div>
+    <div class="rev-stat"><div class="rev-stat-label">${periodWord}</div><div class="rev-stat-val">${rupee(currentAmt)}</div></div>
+    <div class="rev-stat"><div class="rev-stat-label">Vs Previous Period</div><div class="rev-stat-val" style="color:${growth>=0?'#2E7D4F':'#C0392B'};">${growth>=0?'▲':'▼'} ${Math.abs(growth)}%</div></div>
+  `;
+
+  const maxAmt = Math.max(1, ...keys.map(k=>buckets[k].amount));
+  document.getElementById('rev-chart').innerHTML = keys.length ? keys.map(k=>{
+    const amt = buckets[k].amount;
+    const h = Math.max(4, Math.round((amt/maxAmt)*110));
+    return `<div class="rev-bar-wrap">
+      <div class="rev-bar-amt">${amt>0?'₹'+(amt>=100000?(amt/100000).toFixed(1)+'L':amt>=1000?(amt/1000).toFixed(0)+'k':amt):''}</div>
+      <div class="rev-bar" style="height:${h}px;"></div>
+      <div class="rev-bar-label">${buckets[k].label}</div>
+    </div>`;
+  }).join('') : '<div style="color:var(--muted);font-size:0.85rem;padding:20px;">No revenue collected yet.</div>';
+
+  const tbody = document.querySelector('#rev-table tbody');
+  tbody.innerHTML = keys.slice().reverse().map(k=>`
+    <tr><td>${buckets[k].label}</td><td>${rupee(buckets[k].amount)}</td></tr>`).join('')
+    || '<tr><td colspan="2" style="text-align:center;color:var(--muted);">No data</td></tr>';
+}
+
+// ─── Service Providers / Vendors ───
+
+// Deterministic color per name, used for both category and vendor avatars.
+const AVATAR_PALETTE = ['#8B1A2B','#C9962A','#2E7D4F','#4A6FA5','#8E5A9E','#B5601F','#3E7C89','#A5384B'];
+function avatarColor(str){
+  let h = 0; for(let i=0;i<str.length;i++) h = str.charCodeAt(i) + ((h<<5)-h);
+  return AVATAR_PALETTE[Math.abs(h) % AVATAR_PALETTE.length];
+}
+function initials(name){
+  return (name||'?').trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+}
+
+function pvFilePreview(input, labelId){
+  document.getElementById(labelId).textContent = input.files[0] ? input.files[0].name : 'No file chosen';
+}
+function readFileAsDataURL(file){
+  return new Promise((resolve, reject) => {
+    if(!file){ resolve(''); return; }
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function populateProviderCategories(){
+  const sel = document.getElementById('pv-category');
+  if(!sel) return;
+  const p = DB.getPrices();
+  const opts = Object.entries(p.services).map(([key,s])=>`<option value="${key}">${s.name}</option>`).join('');
+  sel.innerHTML = opts + `<option value="other">Other / Custom</option>`;
+}
+
+function catDisplayName(key){
+  const p = DB.getPrices();
+  return p.services[key]?.name || (key==='other' ? 'Other / Custom' : key);
+}
+
+function renderProviders(){
+  const list = document.getElementById('providers-list');
+  if(!list) return;
+  const providers = DB.getProviders();
+  if(!providers.length){ list.innerHTML = '<p style="font-size:0.82rem;color:var(--muted);">No vendors added yet.</p>'; return; }
+  const grouped = {};
+  providers.forEach(pv=>{ (grouped[pv.category] = grouped[pv.category]||[]).push(pv); });
+  list.innerHTML = Object.entries(grouped).map(([cat, items])=>`
+    <div class="provider-cat-group">
+      <div class="provider-cat-title">${catDisplayName(cat)}</div>
+      ${items.map(pv=>`
+        <div class="provider-item">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:36px;height:36px;border-radius:50%;background:${avatarColor(pv.name)};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.78rem;flex-shrink:0;">${initials(pv.name)}</div>
+            <div class="pv-info">
+              <b>${pv.name}</b> — 📞 ${pv.mobile}
+              <span>${pv.costPerDay?`${rupee(pv.costPerDay)}/day `:''}${pv.costPerUnit?`${rupee(pv.costPerUnit)}/unit`:''}${pv.note?' · '+pv.note:''}${pv.businessCard?' · 📇 card':''}${pv.brochure?' · 📄 brochure':''}</span>
+            </div>
+          </div>
+          <button class="pv-del" onclick="deleteProvider('${pv.id}')" title="Remove">✕</button>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+async function addProvider(evt){
+  const category = document.getElementById('pv-category').value;
+  const name = document.getElementById('pv-name').value.trim();
+  const mobile = document.getElementById('pv-mobile').value.trim();
+  const costPerDay = Number(document.getElementById('pv-costday').value) || 0;
+  const costPerUnit = Number(document.getElementById('pv-costunit').value) || 0;
+  const note = document.getElementById('pv-note').value.trim();
+  const cardFile = document.getElementById('pv-card').files[0];
+  const brochureFile = document.getElementById('pv-brochure').files[0];
+  if(!name || !mobile || (!costPerDay && !costPerUnit)){ toast('Name, mobile and at least one cost field are required.','error'); return; }
+
+  const addBtn = evt?.target; if(addBtn) { addBtn.disabled = true; addBtn.textContent = 'Adding…'; }
+  const [businessCard, brochure] = await Promise.all([readFileAsDataURL(cardFile), readFileAsDataURL(brochureFile)]);
+  const pv = { id: 'PV-'+Date.now(), category, name, mobile, costPerDay, costPerUnit, businessCard, brochure, note };
+
+  const providers = DB.getProviders();
+  providers.push(pv);
+  DB.saveProviders(providers);
+  renderProviders();
+  ['pv-name','pv-mobile','pv-costday','pv-costunit','pv-note'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('pv-card').value = ''; document.getElementById('pv-card-name').textContent = 'No file chosen';
+  document.getElementById('pv-brochure').value = ''; document.getElementById('pv-brochure-name').textContent = 'No file chosen';
+  if(addBtn) { addBtn.disabled = false; addBtn.textContent = '+ Add Provider'; }
+  try {
+    await tursoInsertProvider(pv);
+    toast('Vendor added ✓','success');
+  } catch(e) {
+    toast('Vendor saved locally, but Turso sync failed — check connection.','error');
+  }
+}
+
+async function deleteProvider(id){
+  if(!confirm('Remove this vendor?')) return;
+  DB.saveProviders(DB.getProviders().filter(p=>p.id!==id));
+  renderProviders();
+  try { await tursoDeleteProvider(id); } catch(e) { toast('Removed locally, but Turso sync failed.','error'); }
+}
+
+// ─── Customer-facing vendor directory (avatar grid, only for advance-paid users) ───
+function loadVendorsPage(){
+  const wrap = document.getElementById('vendors-directory');
+  if(!wrap) return;
+  if(!userHasAdvancePaid()){
+    wrap.innerHTML = `<div style="text-align:center;color:var(--muted);padding:3rem 1rem;">
+      This directory unlocks once your advance payment is confirmed for a booking.
+    </div>`;
+    return;
+  }
+  const providers = DB.getProviders();
+  if(!providers.length){
+    wrap.innerHTML = `<div style="text-align:center;color:var(--muted);padding:3rem 1rem;">No vendors listed yet — please check back soon.</div>`;
+    return;
+  }
+  const grouped = {};
+  providers.forEach(pv => { (grouped[pv.category] = grouped[pv.category]||[]).push(pv); });
+  wrap.innerHTML = Object.entries(grouped).map(([cat, items])=>`
+    <div class="vendor-cat-block">
+      <div class="vendor-cat-head">
+        <div class="cat-avatar" style="background:${avatarColor(cat)};">${initials(catDisplayName(cat))}</div>
+        <h3>${catDisplayName(cat)}</h3>
+      </div>
+      <div class="vendor-grid">
+        ${items.map(pv=>`
+          <div class="vendor-avatar-wrap">
+            <div class="vendor-tooltip">📞 ${pv.mobile}</div>
+            <div class="vendor-avatar" style="background:${avatarColor(pv.name)};" onclick="openVendorDetail('${pv.id}')">
+              ${initials(pv.name)}
+              <span class="call-badge">📞</span>
+            </div>
+            <div class="vendor-name-label">${pv.name}</div>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function openVendorDetail(id){
+  const pv = DB.getProviders().find(p=>p.id===id);
+  if(!pv) return;
+  const overlay = document.createElement('div');
+  overlay.className = 'vendor-modal-overlay';
+  overlay.id = 'vendor-modal-overlay';
+  overlay.onclick = (e) => { if(e.target===overlay) closeVendorModal(); };
+  overlay.innerHTML = `
+    <div class="vendor-modal-box">
+      <button class="vendor-modal-close" onclick="closeVendorModal()">✕</button>
+      <div class="vendor-modal-avatar" style="background:${avatarColor(pv.name)};">${initials(pv.name)}</div>
+      <h3>${pv.name}</h3>
+      <div class="v-cat">${catDisplayName(pv.category)}</div>
+      <div class="v-detail-row"><span>Mobile</span><span>${pv.mobile}</span></div>
+      ${pv.costPerDay ? `<div class="v-detail-row"><span>Cost per day</span><span>${rupee(pv.costPerDay)}</span></div>` : ''}
+      ${pv.costPerUnit ? `<div class="v-detail-row"><span>Cost per unit</span><span>${rupee(pv.costPerUnit)}</span></div>` : ''}
+      ${pv.note ? `<div class="v-detail-row"><span>Note</span><span style="text-align:right;">${pv.note}</span></div>` : ''}
+      <div class="v-attachments">
+        ${pv.businessCard ? `<a href="${pv.businessCard}" target="_blank">📇 Business Card</a>` : ''}
+        ${pv.brochure ? `<a href="${pv.brochure}" target="_blank">📄 Brochure</a>` : ''}
+      </div>
+      <a class="v-call-btn" href="tel:${pv.mobile}">📞 Call ${pv.name.split(' ')[0]}</a>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+function closeVendorModal(){
+  const el = document.getElementById('vendor-modal-overlay');
+  if(el) el.remove();
 }
 
 function savePrices(type) {
