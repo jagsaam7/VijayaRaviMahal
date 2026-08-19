@@ -41,14 +41,17 @@
   }
   .theme-toggle:hover { transform: rotate(20deg) scale(1.08); }
 
-  /* ─── Amount / Rupee display ─── */
+  /* ─── Amount / Rupee display (bold, pill/oval background) ─── */
   .amt-badge {
     display: inline-flex; align-items: baseline; gap: 2px; font-family: 'Playfair Display', serif;
-    font-weight: 700; color: var(--crimson);
+    font-weight: 800; color: #ffffff;
+    background: linear-gradient(135deg, var(--crimson), #6e1420);
+    padding: 4px 14px; border-radius: 999px; box-shadow: 0 2px 6px rgba(139,26,43,0.25);
+    line-height: 1.4;
   }
   .amt-badge .rupee-sym {
-    font-family: 'Lato', sans-serif; font-weight: 600; font-size: 0.75em; margin-right: 2px;
-    color: var(--gold);
+    font-family: 'Lato', sans-serif; font-weight: 700; font-size: 0.8em; margin-right: 2px;
+    color: var(--gold-light, #e8c988);
   }
   .amt-block {
     display: flex; align-items: center; justify-content: space-between; gap: 10px;
@@ -56,8 +59,17 @@
     border: 1px solid rgba(201,150,42,0.3); border-radius: 10px; padding: 10px 16px; margin: 8px 0;
   }
   .amt-block .amt-label { font-size: 0.78rem; color: var(--muted); letter-spacing: 0.4px; }
-  .amt-block .amt-value { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; color: var(--crimson); }
-  .amt-block.total .amt-value { color: var(--success); font-size: 1.5rem; }
+  .amt-block .amt-value {
+    font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 800; color: #ffffff;
+    background: linear-gradient(135deg, var(--crimson), #6e1420);
+    padding: 4px 16px; border-radius: 999px; display: inline-block;
+  }
+  .amt-block.total .amt-value { background: linear-gradient(135deg, var(--success), #1e7a45); font-size: 1.3rem; }
+  .amt-cell {
+    font-family: 'Playfair Display', serif; font-weight: 800; color: #ffffff !important;
+    background: linear-gradient(135deg, #8B1A2B, #6e1420); padding: 4px 14px; border-radius: 999px;
+    display: inline-block;
+  }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
@@ -770,6 +782,7 @@
     .admin-grid { grid-template-columns: 1fr; }
   }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
 
@@ -1175,6 +1188,14 @@
   </div>
 </div>
 
+<!-- ════════════ PUBLIC VENDOR SUB-PAGE (shareable via ?vendor=ID link) ════════════ -->
+<div id="page-vendor-public" class="page">
+  <div style="padding: 6rem 1.5rem 3rem; max-width: 760px; margin: 0 auto;">
+    <a href="javascript:void(0)" onclick="clearVendorLinkAndGoHome()" style="color:var(--gold);font-size:0.8rem;text-decoration:none;">← Back to Vijaya Ravi Mahal</a>
+    <div id="vendor-public-content" style="margin-top:1.5rem;"></div>
+  </div>
+</div>
+
 <!-- ════════════ VENDOR MANAGEMENT (admin-only dedicated page) ════════════ -->
 <div id="page-vendor-admin" class="page">
   <div class="admin-hero" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;">
@@ -1204,9 +1225,23 @@
           <input type="tel" id="pv-mobile" placeholder="Mobile Number">
           <input type="number" id="pv-costday" placeholder="Cost per day (₹)">
           <input type="number" id="pv-costunit" placeholder="Cost per unit (₹)">
+          <input type="number" id="pv-years" placeholder="Years in service">
+          <input type="text" id="pv-website" placeholder="Website / Instagram">
+          <input type="email" id="pv-email" placeholder="Email">
+          <input type="text" id="pv-address" placeholder="Address">
           <label class="pv-file-label">📇 Business Card<input type="file" accept="image/*" id="pv-card" style="display:none" onchange="pvFilePreview(this,'pv-card-name')"><span id="pv-card-name">No file chosen</span></label>
           <label class="pv-file-label">📄 Brochure<input type="file" accept="image/*,application/pdf" id="pv-brochure" style="display:none" onchange="pvFilePreview(this,'pv-brochure-name')"><span id="pv-brochure-name">No file chosen</span></label>
           <input type="text" id="pv-note" placeholder="Note (e.g. 3-6 course veg menu)" style="grid-column:1/-1;">
+          <textarea id="pv-description" placeholder="About this vendor — shown on their public sub-page, update any time" style="grid-column:1/-1;min-height:80px;font-family:inherit;padding:10px;border-radius:6px;border:1px solid rgba(201,150,42,0.3);background:var(--white);color:var(--dark);"></textarea>
+          <div style="grid-column:1/-1;">
+            <label class="pv-file-label" style="width:100%;justify-content:center;">🖼️ Gallery Photos (multiple)<input type="file" accept="image/*" id="pv-gallery" multiple style="display:none" onchange="pvGalleryPreview(this)"></label>
+            <div id="pv-gallery-preview" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;"></div>
+          </div>
+          <div style="grid-column:1/-1;">
+            <div style="font-size:0.78rem;color:var(--muted);margin-bottom:6px;">Packages (optional)</div>
+            <div id="pv-packages-list"></div>
+            <button type="button" class="btn-mini ghost" onclick="addPvPackageRow()">+ Add Package</button>
+          </div>
           <button class="btn-save-prices" id="pv-submit-btn" style="grid-column:1/-1;" onclick="addProvider(event)">+ Add Provider</button>
           <button class="btn-mini ghost" style="grid-column:1/-1;" onclick="closeVendorForm()">Cancel</button>
         </div>
@@ -1286,6 +1321,16 @@
       </div>
 
       <div class="admin-card" style="grid-column: 1 / -1;">
+        <h3>Registered Users</h3>
+        <div style="overflow-x:auto;">
+          <table class="bookings-table" id="admin-users-table">
+            <thead><tr><th>Name</th><th>Mobile</th><th>Email</th><th>Bookings</th><th>Joined</th><th>Action</th></tr></thead>
+            <tbody id="admin-users-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="admin-card" style="grid-column: 1 / -1;">
         <h3>All Bookings</h3>
         <div style="overflow-x:auto;">
           <table class="bookings-table" id="admin-bookings-table">
@@ -1295,6 +1340,28 @@
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ════════════ ADMIN: EDIT USER ACCOUNT MODAL ════════════ -->
+<div id="admin-user-modal" class="modal-overlay hidden">
+  <div class="modal-box" style="max-width:440px;">
+    <button class="modal-close" onclick="closeAdminUserModal()">✕</button>
+    <h3 style="font-family:'Playfair Display',serif;color:var(--crimson);margin-bottom:1rem;">Edit User Account</h3>
+    <input type="hidden" id="au-id">
+    <div class="form-group"><label>Full Name</label><input type="text" id="au-name"></div>
+    <div class="form-group"><label>Mobile</label><input type="text" id="au-mobile"></div>
+    <div class="form-group"><label>Email <span style="color:var(--muted);font-weight:400;">(login ID — changing may lock the user out)</span></label><input type="email" id="au-email"></div>
+    <div class="form-group">
+      <label>Reset Password <span style="color:var(--muted);font-weight:400;">(leave blank to keep current password)</span></label>
+      <input type="text" id="au-newpass" placeholder="New password">
+    </div>
+    <div id="admin-user-msg" style="font-size:0.82rem;margin:6px 0;"></div>
+    <div style="display:flex;gap:10px;margin-top:14px;">
+      <button class="btn-solid" style="flex:1;" onclick="saveAdminUserEdit()">Save Changes</button>
+      <button class="btn-outline" style="flex:1;" onclick="closeAdminUserModal()">Cancel</button>
+    </div>
+    <button class="btn-outline" style="width:100%;margin-top:10px;color:var(--error);border-color:var(--error);" onclick="deleteAdminUser()">🗑 Delete Account</button>
   </div>
 </div>
 
@@ -1354,6 +1421,7 @@
           </div>
           <span class="err-msg" id="l-pass-err"></span>
           <button class="btn-auth" onclick="loginUser()">Login to My Account</button>
+          <p class="auth-note" style="text-align:center;"><a style="color:var(--gold);cursor:pointer;font-weight:600;" onclick="openForgotPassword()">Forgot Password?</a></p>
           <p class="auth-note">Don't have an account? <a style="color:var(--crimson);cursor:pointer;" onclick="switchTab('register')">Register here</a></p>
         </div>
       </div>
@@ -1380,6 +1448,59 @@
           <p class="auth-note">Already registered? <a style="color:var(--crimson);cursor:pointer;" onclick="switchTab('login')">Login here</a></p>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Forgot Password Modal (OTP via Email) -->
+<div class="modal-overlay hidden" id="fp-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">Reset Password</span>
+      <button class="modal-close" onclick="closeForgotPassword()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Step 1: enter email -->
+      <div id="fp-step-email">
+        <p class="auth-note" style="margin-bottom:12px;">Enter the Gmail address linked to your account. We'll send a 6-digit OTP to verify it's you.</p>
+        <div class="auth-form">
+          <input type="email" id="fp-email" placeholder="Gmail Address">
+          <span class="err-msg" id="fp-email-err"></span>
+          <button class="btn-auth" id="fp-send-btn" onclick="sendPasswordResetOtp()">Send OTP</button>
+        </div>
+      </div>
+
+      <!-- Step 2: enter OTP + new password -->
+      <div id="fp-step-otp" class="hidden">
+        <p class="auth-note" style="margin-bottom:12px;">Enter the 6-digit OTP sent to <b id="fp-target-email"></b> and choose a new password.</p>
+        <div class="auth-form">
+          <input type="text" id="fp-otp" placeholder="6-digit OTP" maxlength="6" inputmode="numeric">
+          <span class="err-msg" id="fp-otp-err"></span>
+          <div class="password-wrap">
+            <input type="password" id="fp-newpass" placeholder="New Password (min 8 chars)">
+            <button class="toggle-pw" onclick="togglePw('fp-newpass')">👁</button>
+          </div>
+          <div class="password-wrap">
+            <input type="password" id="fp-confirmpass" placeholder="Confirm New Password">
+          </div>
+          <span class="err-msg" id="fp-pass-err"></span>
+          <button class="btn-auth" onclick="verifyOtpAndResetPassword()">Reset Password</button>
+          <p class="auth-note" style="text-align:center;">
+            <span id="fp-timer" style="color:var(--muted);"></span>
+            <a id="fp-resend" style="color:var(--gold);cursor:pointer;font-weight:600;display:none;" onclick="sendPasswordResetOtp()">Resend OTP</a>
+          </p>
+        </div>
+      </div>
+
+      <!-- Step 3: success -->
+      <div id="fp-step-done" class="hidden" style="text-align:center;padding:1rem 0;">
+        <div style="font-size:2.4rem;">✅</div>
+        <p style="font-family:'Playfair Display',serif;color:var(--success);font-size:1.15rem;margin:10px 0 4px;">Password reset successful</p>
+        <p class="auth-note">You can now log in with your new password.</p>
+        <button class="btn-auth" onclick="closeForgotPassword();openModal('login')">Back to Login</button>
+      </div>
+
     </div>
   </div>
 </div>
@@ -1425,6 +1546,22 @@ const TURSO_CONFIG = {
   authToken: "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3ODY5NTU4MTEsImlkIjoiMDE5ZjgwMzktZTIwMS03OGJhLTkwYWEtNjYxNzJlZmQ0YzE4Iiwia2lkIjoiTVgwNUM3d2czMllVdVJTblR2dHBtczlrRXRhbXlVRWpZTzZYRl9UMFRSSSIsInJpZCI6IjRhNTYxYTUwLTgxZTUtNDQwOS04YTU0LTFlOTlmMzAyNDRjNyJ9.78yZSNxzUEWMS0wKLD9XbugiMlBXEPVhFk7AKU2bQNLR4h5hij33bSjbPpT6xsC9A1v-GDi4LIjGkPjbSaAbBw"
 };
 
+// ─── EmailJS config (used to send the "forgot password" OTP email) ───
+// EmailJS lets a static page send email without a backend server.
+// 1) Create a free account at https://www.emailjs.com
+// 2) Add an Email Service (e.g. Gmail) -> copy its Service ID below
+// 3) Create an Email Template with vars {{to_email}} and {{otp_code}} -> copy its Template ID below
+// 4) Account -> General -> copy your Public Key below
+// Until these are filled in, the OTP will be shown on-screen instead of emailed (dev fallback).
+const EMAILJS_CONFIG = {
+  serviceId: "service_xffjyhs",
+  templateId: "template_sf77yqk",
+  publicKey: "mnv80dR6tdpn3tryk"
+};
+if (window.emailjs && EMAILJS_CONFIG.publicKey !== "YOUR_EMAILJS_PUBLIC_KEY") {
+  emailjs.init({ publicKey: EMAILJS_CONFIG.publicKey });
+}
+
 // Low-level: run one or more SQL statements against Turso's HTTP (v2/pipeline) API
 async function tursoExec(statements) {
   // statements: array of { sql, args? }
@@ -1467,7 +1604,9 @@ async function tursoInitSchema() {
     { sql: `CREATE TABLE IF NOT EXISTS providers (
         id TEXT PRIMARY KEY, category TEXT, name TEXT, mobile TEXT,
         priceType TEXT, price INTEGER, minBudget INTEGER, maxBudget INTEGER,
-        note TEXT, createdAt TEXT)` }
+        note TEXT, createdAt TEXT)` },
+    { sql: `CREATE TABLE IF NOT EXISTS password_resets (
+        email TEXT PRIMARY KEY, otpHash TEXT, expiresAt TEXT, attempts INTEGER DEFAULT 0)` }
   ]);
   // ─── Migrations: add booking-lifecycle columns if this is an older table ───
   const migrations = [
@@ -1483,7 +1622,14 @@ async function tursoInitSchema() {
     "ALTER TABLE providers ADD COLUMN businessCard TEXT",
     "ALTER TABLE providers ADD COLUMN brochure TEXT",
     "ALTER TABLE providers ADD COLUMN costPerDay INTEGER",
-    "ALTER TABLE providers ADD COLUMN costPerUnit INTEGER"
+    "ALTER TABLE providers ADD COLUMN costPerUnit INTEGER",
+    "ALTER TABLE providers ADD COLUMN yearsInService INTEGER",
+    "ALTER TABLE providers ADD COLUMN description TEXT",
+    "ALTER TABLE providers ADD COLUMN website TEXT",
+    "ALTER TABLE providers ADD COLUMN vendorEmail TEXT",
+    "ALTER TABLE providers ADD COLUMN address TEXT",
+    "ALTER TABLE providers ADD COLUMN gallery TEXT",
+    "ALTER TABLE providers ADD COLUMN packages TEXT"
   ];
   for(const sql of migrations) { try { await tursoExec([{ sql }]); } catch(e) {} }
   return !!result;
@@ -1521,7 +1667,11 @@ async function tursoSyncAll() {
     }));
     const providersRaw = rowsToObjects(result.results[2]).map(p => ({
       ...p, costPerDay: Number(p.costPerDay)||0, costPerUnit: Number(p.costPerUnit)||0,
-      businessCard: p.businessCard||'', brochure: p.brochure||''
+      businessCard: p.businessCard||'', brochure: p.brochure||'',
+      yearsInService: Number(p.yearsInService)||0, description: p.description||'',
+      website: p.website||'', vendorEmail: p.vendorEmail||'', address: p.address||'',
+      gallery: (()=>{ try { return JSON.parse(p.gallery||'[]'); } catch(e){ return []; } })(),
+      packages: (()=>{ try { return JSON.parse(p.packages||'[]'); } catch(e){ return []; } })()
     }));
     DB.set('users', usersRaw);
     DB.set('bookings', bookingsRaw);
@@ -1539,9 +1689,13 @@ async function tursoInsertUser(user) {
 
 async function tursoUpdateUser(user) {
   await tursoExec([{
-    sql: "UPDATE users SET name=?, mobile=? WHERE id=?",
-    args: [user.name, user.mobile, user.id]
+    sql: "UPDATE users SET name=?, mobile=?, email=?, password=? WHERE id=?",
+    args: [user.name, user.mobile, user.email, user.password, user.id]
   }]);
+}
+
+async function tursoDeleteUser(id) {
+  await tursoExec([{ sql: "DELETE FROM users WHERE id = ?", args: [id] }]);
 }
 
 async function tursoInsertBooking(b) {
@@ -1572,21 +1726,50 @@ async function tursoUpdateBooking(b) {
 // double-booking check right before a booking is confirmed)
 async function tursoInsertProvider(pv) {
   await tursoExec([{
-    sql: `INSERT INTO providers (id,category,name,mobile,businessCard,brochure,costPerDay,costPerUnit,note,createdAt)
-          VALUES (?,?,?,?,?,?,?,?,?,?)`,
-    args: [pv.id, pv.category, pv.name, pv.mobile, pv.businessCard||'', pv.brochure||'', pv.costPerDay||0, pv.costPerUnit||0, pv.note||'', new Date().toISOString()]
+    sql: `INSERT INTO providers (id,category,name,mobile,businessCard,brochure,costPerDay,costPerUnit,note,createdAt,yearsInService,description,website,vendorEmail,address,gallery,packages)
+          VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+    args: [pv.id, pv.category, pv.name, pv.mobile, pv.businessCard||'', pv.brochure||'', pv.costPerDay||0, pv.costPerUnit||0, pv.note||'', new Date().toISOString(),
+           pv.yearsInService||0, pv.description||'', pv.website||'', pv.vendorEmail||'', pv.address||'',
+           JSON.stringify(pv.gallery||[]), JSON.stringify(pv.packages||[])]
   }]);
 }
 
 async function tursoUpdateProvider(pv) {
   await tursoExec([{
-    sql: `UPDATE providers SET category=?, name=?, mobile=?, businessCard=?, brochure=?, costPerDay=?, costPerUnit=?, note=? WHERE id=?`,
-    args: [pv.category, pv.name, pv.mobile, pv.businessCard||'', pv.brochure||'', pv.costPerDay||0, pv.costPerUnit||0, pv.note||'', pv.id]
+    sql: `UPDATE providers SET category=?, name=?, mobile=?, businessCard=?, brochure=?, costPerDay=?, costPerUnit=?, note=?,
+          yearsInService=?, description=?, website=?, vendorEmail=?, address=?, gallery=?, packages=? WHERE id=?`,
+    args: [pv.category, pv.name, pv.mobile, pv.businessCard||'', pv.brochure||'', pv.costPerDay||0, pv.costPerUnit||0, pv.note||'',
+           pv.yearsInService||0, pv.description||'', pv.website||'', pv.vendorEmail||'', pv.address||'',
+           JSON.stringify(pv.gallery||[]), JSON.stringify(pv.packages||[]), pv.id]
   }]);
 }
 
 async function tursoDeleteProvider(id) {
   await tursoExec([{ sql: "DELETE FROM providers WHERE id = ?", args: [id] }]);
+}
+
+// Fetch one vendor directly from Turso — used by the public shareable vendor
+// sub-page so it works even for a visitor with no local cache / not logged in.
+async function tursoFetchProviderById(id) {
+  const result = await tursoExec([{ sql: "SELECT * FROM providers WHERE id = ?", args: [id] }]);
+  if(!result || !result.results) return null;
+  try {
+    const r = result.results[0];
+    const cols = r.response.result.cols.map(c=>c.name);
+    const rows = r.response.result.rows.map(row => {
+      const obj = {}; row.forEach((cell,i)=>{ obj[cols[i]] = cell.value; }); return obj;
+    });
+    if(!rows.length) return null;
+    const p = rows[0];
+    return {
+      ...p, costPerDay: Number(p.costPerDay)||0, costPerUnit: Number(p.costPerUnit)||0,
+      businessCard: p.businessCard||'', brochure: p.brochure||'',
+      yearsInService: Number(p.yearsInService)||0, description: p.description||'',
+      website: p.website||'', vendorEmail: p.vendorEmail||'', address: p.address||'',
+      gallery: (()=>{ try { return JSON.parse(p.gallery||'[]'); } catch(e){ return []; } })(),
+      packages: (()=>{ try { return JSON.parse(p.packages||'[]'); } catch(e){ return []; } })()
+    };
+  } catch(e) { return null; }
 }
 
 async function tursoGetBookingsForDate(date) {
@@ -1658,7 +1841,77 @@ let selectedServices = {};
   } else {
     toast('Could not reach the database — running on local cache for now.', 'error');
   }
+  // If this page was opened via a shared vendor link (?vendor=ID), show that
+  // vendor's public sub-page directly — no login required.
+  const vendorParam = new URLSearchParams(window.location.search).get('vendor');
+  if(vendorParam) { renderPublicVendorPage(vendorParam); }
 })();
+
+// ─── Public, no-login-required vendor sub-page (linked from the main site or shared directly) ───
+async function renderPublicVendorPage(id){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-vendor-public').classList.add('active');
+  window.scrollTo(0,0);
+  const box = document.getElementById('vendor-public-content');
+  box.innerHTML = `<div style="text-align:center;color:var(--muted);padding:3rem 0;">Loading vendor details…</div>`;
+  let pv = DB.getProviders().find(p=>p.id===id);
+  if(!pv){ pv = await tursoFetchProviderById(id); }
+  if(!pv){
+    box.innerHTML = `<div style="text-align:center;color:var(--muted);padding:3rem 0;">
+      <h3 style="font-family:'Playfair Display',serif;color:var(--crimson);margin-bottom:8px;">Vendor not found</h3>
+      This link may be outdated. <a href="javascript:void(0)" onclick="clearVendorLinkAndGoHome()" style="color:var(--gold);">Return to the homepage.</a>
+    </div>`;
+    return;
+  }
+  box.innerHTML = `
+    <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;margin-bottom:2rem;">
+      <div style="width:180px;height:180px;border-radius:12px;overflow:hidden;background:var(--champagne);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid rgba(201,150,42,0.3);">
+        ${pv.businessCard ? `<img src="${pv.businessCard}" style="width:100%;height:100%;object-fit:cover;">` : `<div style="font-family:'Playfair Display',serif;font-size:3rem;color:var(--gold);">${initials(pv.name)}</div>`}
+      </div>
+      <div style="flex:1;min-width:240px;">
+        <div style="font-size:0.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);">${catDisplayName(pv.category)}</div>
+        <h1 style="font-family:'Playfair Display',serif;font-size:2rem;color:var(--crimson);margin:6px 0 12px;">${pv.name}</h1>
+        <div style="display:flex;gap:24px;flex-wrap:wrap;margin-bottom:14px;">
+          ${pv.yearsInService ? `<div><div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;">Experience</div><div style="font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--dark);">${pv.yearsInService} yrs</div></div>` : ''}
+          ${(pv.costPerDay||pv.costPerUnit) ? `<div><div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;">Cost</div><div style="font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--dark);">${pv.costPerDay?rupee(pv.costPerDay)+'/day':''} ${pv.costPerUnit?rupee(pv.costPerUnit)+'/unit':''}</div></div>` : ''}
+        </div>
+        ${pv.mobile ? `<a href="tel:${pv.mobile}" class="btn-solid" style="display:inline-block;text-decoration:none;">📞 Call ${pv.name.split(' ')[0]}</a>` : ''}
+        ${pv.brochure ? `<a href="${pv.brochure}" target="_blank" class="btn-outline" style="display:inline-block;text-decoration:none;margin-left:8px;">📄 Brochure</a>` : ''}
+      </div>
+    </div>
+
+    ${pv.description ? `<div style="margin-bottom:2rem;"><h3 style="font-family:'Playfair Display',serif;color:var(--crimson);border-bottom:2px solid var(--gold);display:inline-block;padding-bottom:4px;margin-bottom:10px;">About</h3><p style="white-space:pre-wrap;color:var(--mid);line-height:1.7;">${pv.description}</p></div>` : ''}
+
+    ${(pv.packages && pv.packages.length) ? `<div style="margin-bottom:2rem;"><h3 style="font-family:'Playfair Display',serif;color:var(--crimson);border-bottom:2px solid var(--gold);display:inline-block;padding-bottom:4px;margin-bottom:14px;">Packages</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;">
+        ${pv.packages.map(p=>`<div style="border:1px solid rgba(201,150,42,0.3);border-radius:10px;padding:16px;background:var(--white);">
+          <div style="font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--crimson);">${p.name||''}</div>
+          <div style="color:var(--success);font-weight:700;margin:4px 0;">${p.cost||''}</div>
+          <div style="font-size:0.82rem;color:var(--muted);">${p.desc||''}</div>
+        </div>`).join('')}
+      </div>
+    </div>` : ''}
+
+    ${(pv.gallery && pv.gallery.length) ? `<div style="margin-bottom:2rem;"><h3 style="font-family:'Playfair Display',serif;color:var(--crimson);border-bottom:2px solid var(--gold);display:inline-block;padding-bottom:4px;margin-bottom:14px;">Gallery</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;">
+        ${pv.gallery.map(g=>`<img src="${g}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;border:1px solid rgba(201,150,42,0.3);">`).join('')}
+      </div>
+    </div>` : ''}
+
+    ${(pv.address||pv.vendorEmail||pv.website) ? `<div><h3 style="font-family:'Playfair Display',serif;color:var(--crimson);border-bottom:2px solid var(--gold);display:inline-block;padding-bottom:4px;margin-bottom:10px;">Contact</h3>
+      <div style="color:var(--mid);line-height:1.9;">
+        ${pv.address?`📍 ${pv.address}<br>`:''}${pv.vendorEmail?`✉️ ${pv.vendorEmail}<br>`:''}${pv.website?`🔗 ${pv.website}`:''}
+      </div>
+    </div>` : ''}
+  `;
+}
+
+function clearVendorLinkAndGoHome(){
+  const url = new URL(window.location.href);
+  url.searchParams.delete('vendor');
+  window.history.replaceState({}, '', url.toString());
+  showPage('home');
+}
 
 // ═══════════════════════════════════════════════════
 //  SOFT BACKGROUND MUSIC (auto-play, browser-safe)
@@ -1901,6 +2154,183 @@ async function loginUser() {
   setCurrentUser(user);
   closeModal();
   toast('Welcome back, '+user.name.split(' ')[0]+'!', 'success');
+}
+
+// ─── Forgot Password: OTP-based reset via email ───
+let fpResendTimer = null;
+
+function openForgotPassword(){
+  closeModal();
+  document.getElementById('fp-email').value = document.getElementById('l-email').value || '';
+  document.getElementById('fp-step-email').classList.remove('hidden');
+  document.getElementById('fp-step-otp').classList.add('hidden');
+  document.getElementById('fp-step-done').classList.add('hidden');
+  document.getElementById('fp-email-err').textContent = '';
+  document.getElementById('fp-modal').classList.remove('hidden');
+}
+function closeForgotPassword(){
+  document.getElementById('fp-modal').classList.add('hidden');
+  if(fpResendTimer) clearInterval(fpResendTimer);
+}
+function genOtp(){ return String(Math.floor(100000 + Math.random()*900000)); }
+
+// Defensive: ensures the password_resets table exists before we touch it,
+// regardless of whether the boot-time schema init already ran for this session.
+async function ensurePasswordResetsTable(){
+  await tursoExec([{ sql: `CREATE TABLE IF NOT EXISTS password_resets (
+    email TEXT PRIMARY KEY, otpHash TEXT, expiresAt TEXT, attempts INTEGER DEFAULT 0)` }]);
+}
+
+async function sendPasswordResetOtp(){
+  const email = document.getElementById('fp-email').value.trim();
+  const errEl = document.getElementById('fp-email-err');
+  errEl.textContent = '';
+  if(!/^[^\s@]+@gmail\.com$/i.test(email)) { errEl.textContent = 'Enter a valid Gmail address'; return; }
+
+  const users = DB.getUsers();
+  const user = users.find(u=>u.email===email);
+  if(!user) { errEl.textContent = 'No account found with this email'; return; }
+
+  const btn = document.getElementById('fp-send-btn');
+  btn.disabled = true; btn.textContent = 'Sending…';
+
+  await ensurePasswordResetsTable();
+
+  const otp = genOtp();
+  const otpHash = await sha256Hex(otp);
+  const expiresAt = new Date(Date.now() + 10*60*1000).toISOString();
+
+  try{
+    await tursoExec([{
+      sql: `INSERT INTO password_resets (email, otpHash, expiresAt, attempts) VALUES (?,?,?,0)
+            ON CONFLICT(email) DO UPDATE SET otpHash=excluded.otpHash, expiresAt=excluded.expiresAt, attempts=0`,
+      args: [email, otpHash, expiresAt]
+    }]);
+  }catch(e){
+    errEl.textContent = 'Could not start reset — try again.'; btn.disabled=false; btn.textContent='Send OTP'; return;
+  }
+
+  let emailSent = false;
+  let emailError = '';
+  if (window.emailjs && EMAILJS_CONFIG.publicKey !== "YOUR_EMAILJS_PUBLIC_KEY") {
+    try{
+      const resp = await emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.templateId, {
+        to_email: email, to_name: user.name, otp_code: otp
+      });
+      console.log('EmailJS response:', resp);
+      emailSent = true;
+    }catch(e){
+      console.error('EmailJS send failed', e);
+      emailError = (e && (e.text || e.message)) ? (e.text || e.message) : JSON.stringify(e);
+    }
+  } else {
+    emailError = 'EmailJS not loaded or not configured.';
+  }
+
+  btn.disabled = false; btn.textContent = 'Send OTP';
+  document.getElementById('fp-target-email').textContent = email;
+  document.getElementById('fp-step-email').classList.add('hidden');
+  document.getElementById('fp-step-otp').classList.remove('hidden');
+  document.getElementById('fp-otp').value = '';
+  document.getElementById('fp-otp-err').textContent = '';
+  startFpResendTimer();
+
+  if(emailSent){
+    toast('OTP sent to '+email, 'success');
+  } else {
+    // Dev fallback: email failed to send, so show the OTP on-screen instead of failing silently,
+    // and surface the real error so it can be diagnosed.
+    toast('Email send failed: '+emailError, 'error');
+    document.getElementById('fp-otp-err').innerHTML = '<span style="color:var(--gold);">Email failed ('+escapeHtmlSafe(emailError)+'). Dev fallback OTP: <b>'+otp+'</b></span>';
+  }
+}
+function escapeHtmlSafe(s){ return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+function startFpResendTimer(){
+  let seconds = 60;
+  const timerEl = document.getElementById('fp-timer');
+  const resendEl = document.getElementById('fp-resend');
+  resendEl.style.display = 'none';
+  if(fpResendTimer) clearInterval(fpResendTimer);
+  timerEl.textContent = `Resend OTP in ${seconds}s`;
+  fpResendTimer = setInterval(()=>{
+    seconds--;
+    if(seconds<=0){
+      clearInterval(fpResendTimer);
+      timerEl.textContent = '';
+      resendEl.style.display = 'inline';
+    } else {
+      timerEl.textContent = `Resend OTP in ${seconds}s`;
+    }
+  }, 1000);
+}
+
+async function verifyOtpAndResetPassword(){
+  const email = document.getElementById('fp-email').value.trim();
+  const otp = document.getElementById('fp-otp').value.trim();
+  const newPass = document.getElementById('fp-newpass').value;
+  const confirmPass = document.getElementById('fp-confirmpass').value;
+  const otpErr = document.getElementById('fp-otp-err');
+  const passErr = document.getElementById('fp-pass-err');
+  otpErr.textContent = ''; passErr.textContent = '';
+
+  if(!/^\d{6}$/.test(otp)) { otpErr.textContent = 'Enter the 6-digit OTP'; return; }
+  if(newPass.length < 8) { passErr.textContent = 'Password must be at least 8 characters'; return; }
+  if(newPass !== confirmPass) { passErr.textContent = 'Passwords do not match'; return; }
+
+  let record;
+  try{
+    await ensurePasswordResetsTable();
+    const res = await tursoExec([{ sql: "SELECT * FROM password_resets WHERE email=?", args:[email] }]);
+    if(!res) throw new Error('Could not reach the database (network/CORS issue).');
+    const r0 = res.results && res.results[0];
+    if(!r0) throw new Error('Unexpected empty response from database.');
+    if(r0.type === 'error') throw new Error(r0.error && r0.error.message ? r0.error.message : 'Database returned an error.');
+    const cols = r0.response.result.cols.map(c=>c.name);
+    const rows = r0.response.result.rows.map(r=>{ const o={}; r.forEach((c,i)=>o[cols[i]]=c.value); return o; });
+    record = rows[0];
+  }catch(e){
+    console.error('OTP verify lookup failed:', e);
+    otpErr.textContent = 'Something went wrong: ' + (e && e.message ? e.message : 'unknown error');
+    return;
+  }
+
+  if(!record) { otpErr.textContent = 'Request a new OTP first.'; return; }
+  if(new Date(record.expiresAt) < new Date()) { otpErr.textContent = 'OTP expired — click Resend OTP.'; return; }
+  if(Number(record.attempts) >= 5) { otpErr.textContent = 'Too many attempts — request a new OTP.'; return; }
+
+  const otpHash = await sha256Hex(otp);
+  if(otpHash !== record.otpHash){
+    try{ await tursoExec([{ sql:"UPDATE password_resets SET attempts=attempts+1 WHERE email=?", args:[email] }]); }catch(e){}
+    otpErr.textContent = 'Incorrect OTP';
+    return;
+  }
+
+  // OTP verified — update password
+  const users = DB.getUsers();
+  const idx = users.findIndex(u=>u.email===email);
+  if(idx===-1) { otpErr.textContent = 'Account not found.'; return; }
+  users[idx].password = btoa(newPass);
+  DB.saveUsers(users);
+  try{
+    await tursoUpdateUser(users[idx]);
+    await tursoExec([{ sql:"DELETE FROM password_resets WHERE email=?", args:[email] }]);
+  }catch(e){
+    console.error('Password update sync to Turso failed:', e);
+    otpErr.textContent = 'Password saved locally, but could not sync to the server. Please try logging in — if it fails, try the reset again.';
+    return;
+  }
+
+  if(currentUser && currentUser.email===email){ currentUser = users[idx]; setCurrentUser(currentUser); }
+  if(fpResendTimer) clearInterval(fpResendTimer);
+  document.getElementById('fp-step-otp').classList.add('hidden');
+  document.getElementById('fp-step-done').classList.remove('hidden');
+}
+
+async function sha256Hex(text){
+  const enc = new TextEncoder().encode(text);
+  const buf = await crypto.subtle.digest('SHA-256', enc);
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
 }
 
 function setCurrentUser(user) {
@@ -2437,6 +2867,61 @@ async function saveProfile() {
   }
 }
 
+// ─── Admin: View / Edit user account, reset password ───
+function openAdminUserModal(userId){
+  const u = DB.getUsers().find(x=>String(x.id)===String(userId));
+  if(!u) return;
+  document.getElementById('au-id').value = u.id;
+  document.getElementById('au-name').value = u.name || '';
+  document.getElementById('au-mobile').value = u.mobile || '';
+  document.getElementById('au-email').value = u.email || '';
+  document.getElementById('au-newpass').value = '';
+  document.getElementById('admin-user-msg').innerHTML = '';
+  document.getElementById('admin-user-modal').classList.remove('hidden');
+}
+function closeAdminUserModal(){
+  document.getElementById('admin-user-modal').classList.add('hidden');
+}
+async function saveAdminUserEdit(){
+  const id = document.getElementById('au-id').value;
+  const users = DB.getUsers();
+  const idx = users.findIndex(u=>String(u.id)===String(id));
+  if(idx===-1) return;
+  const name = document.getElementById('au-name').value.trim();
+  const mobile = document.getElementById('au-mobile').value.trim();
+  const email = document.getElementById('au-email').value.trim();
+  const newPass = document.getElementById('au-newpass').value;
+  const msgEl = document.getElementById('admin-user-msg');
+  if(!name || !mobile || !email){ msgEl.innerHTML = '<span style="color:var(--error);">Name, mobile and email are required.</span>'; return; }
+  if(email !== users[idx].email && users.some(u=>String(u.id)!==String(id) && u.email===email)){
+    msgEl.innerHTML = '<span style="color:var(--error);">Another account already uses that email.</span>';
+    return;
+  }
+  users[idx].name = name;
+  users[idx].mobile = mobile;
+  users[idx].email = email;
+  if(newPass && newPass.length >= 4){ users[idx].password = btoa(newPass); }
+  else if(newPass && newPass.length < 4){ msgEl.innerHTML = '<span style="color:var(--error);">New password must be at least 4 characters.</span>'; return; }
+  DB.saveUsers(users);
+  try{ await tursoUpdateUser(users[idx]); }catch(e){}
+  if(currentUser && String(currentUser.id)===String(id)){ currentUser = users[idx]; setCurrentUser(currentUser); }
+  msgEl.innerHTML = '<span style="color:var(--success);">Saved ✓</span>';
+  loadAdminPage();
+  setTimeout(closeAdminUserModal, 500);
+  toast('User account updated','success');
+}
+async function deleteAdminUser(){
+  const id = document.getElementById('au-id').value;
+  if(!confirm('Delete this user account permanently? Their bookings will remain on record but will no longer be linked to a login.')) return;
+  let users = DB.getUsers();
+  users = users.filter(u=>String(u.id)!==String(id));
+  DB.saveUsers(users);
+  try{ await tursoDeleteUser(id); }catch(e){}
+  closeAdminUserModal();
+  loadAdminPage();
+  toast('User account deleted','success');
+}
+
 // ─── Admin Page ───
 function loadAdminPage() {
   const bookings = DB.getBookings();
@@ -2450,6 +2935,23 @@ function loadAdminPage() {
   renderRevenue();
   const vaCount = document.getElementById('va-summary-count');
   if(vaCount) vaCount.textContent = DB.getProviders().length;
+
+  // Registered Users table
+  const ubody = document.getElementById('admin-users-body');
+  if(ubody){
+    ubody.innerHTML = users.length ? users.slice().reverse().map(u=>{
+      const bCount = bookings.filter(b=>b.userId===u.id).length;
+      const joined = u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+      return `<tr>
+        <td>${u.name||'—'}</td>
+        <td>${u.mobile||'—'}</td>
+        <td>${u.email||'—'}</td>
+        <td>${bCount}</td>
+        <td>${joined}</td>
+        <td><button class="btn-mini" onclick="openAdminUserModal('${u.id}')">✎ View / Edit</button></td>
+      </tr>`;
+    }).join('') : `<tr><td colspan="6" style="text-align:center;color:var(--muted);">No registered users yet.</td></tr>`;
+  }
 
   // Bookings table
   const tbody = document.getElementById('admin-bookings-body');
@@ -2658,7 +3160,7 @@ function openBill(ref, type){
   if(!b) return;
   const today = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'long', year:'numeric' });
   const balance = Math.max(0, Number(b.total) - Number(b.advancePaid||0));
-  const inr = n => '<span style="color:#C9962A;font-weight:600;font-size:0.85em;">₹</span>' + Number(n||0).toLocaleString('en-IN');
+  const inr = n => '<span class="pill"><span style="color:#e8c988;font-weight:700;font-size:0.8em;">₹</span>' + Number(n||0).toLocaleString('en-IN') + '</span>';
   const rows = type==='advance' ? `
       <tr><td>Total Package Amount</td><td class="amt-cell">${inr(b.total)}</td></tr>
       <tr><td>Advance Received (Txn: ${b.txn||'-'})</td><td class="amt-cell">${inr(b.advancePaid)}</td></tr>
@@ -2679,7 +3181,8 @@ function openBill(ref, type){
       .bill-doc table { width:100%; border-collapse:collapse; margin:14px 0; font-size:0.9rem; }
       .bill-doc th, .bill-doc td { border:1px solid #ccc; padding:9px 12px; text-align:left; }
       .bill-doc th { background:#F5E6C8; }
-      .amt-cell { text-align:right; font-family:'Playfair Display',serif; font-weight:700; color:#8B1A2B; }
+      .amt-cell { text-align:right; font-family:'Playfair Display',serif; font-weight:800; color:#fff; }
+      .amt-cell span.pill { display:inline-block; background:linear-gradient(135deg,#8B1A2B,#6e1420); padding:4px 14px; border-radius:999px; }
       .bill-doc .bill-total-row td { font-weight:700; background:#FDF8F0; font-size:1.05rem; }
       .bill-doc .bill-seal { margin-top:50px; display:flex; justify-content:space-between; align-items:center; }
       .bill-video-link { display:inline-flex; align-items:center; gap:8px; margin-top:22px; padding:10px 16px; background:#fdecec; border:1px solid #e1a6a6; border-radius:8px; text-decoration:none; color:#8B1A2B; font-size:0.82rem; font-weight:700; }
@@ -2923,15 +3426,48 @@ function renderVACategories(){
   }).join('');
 }
 
+let pvGalleryData = [];
+let pvPackagesData = [];
+
 function openVendorAddForm(){
   editingProviderId = null;
   populateProviderCategories();
-  ['pv-name','pv-mobile','pv-costday','pv-costunit','pv-note'].forEach(id=>document.getElementById(id).value='');
+  ['pv-name','pv-mobile','pv-costday','pv-costunit','pv-note','pv-years','pv-website','pv-email','pv-address','pv-description'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('pv-card').value = ''; document.getElementById('pv-card-name').textContent = 'No file chosen';
   document.getElementById('pv-brochure').value = ''; document.getElementById('pv-brochure-name').textContent = 'No file chosen';
+  document.getElementById('pv-gallery').value = '';
+  pvGalleryData = []; renderPvGalleryPreview();
+  pvPackagesData = []; renderPvPackagesList();
   document.getElementById('va-form-title').textContent = 'Add New Vendor';
   document.getElementById('pv-submit-btn').textContent = '+ Add Provider';
   vaShowView('form');
+}
+
+function pvGalleryPreview(input){
+  const files = Array.from(input.files || []);
+  let remaining = files.length;
+  files.forEach(f=>{
+    const reader = new FileReader();
+    reader.onload = e=>{ pvGalleryData.push(e.target.result); remaining--; if(remaining===0) renderPvGalleryPreview(); };
+    reader.readAsDataURL(f);
+  });
+}
+function renderPvGalleryPreview(){
+  document.getElementById('pv-gallery-preview').innerHTML = pvGalleryData.map((g,i)=>`
+    <div style="position:relative;">
+      <img src="${g}" style="width:64px;height:64px;object-fit:cover;border-radius:6px;border:1px solid rgba(201,150,42,0.3);">
+      <button type="button" onclick="pvGalleryData.splice(${i},1);renderPvGalleryPreview();" style="position:absolute;top:-6px;right:-6px;background:var(--error);color:#fff;border:none;width:18px;height:18px;border-radius:50%;font-size:11px;line-height:1;cursor:pointer;">×</button>
+    </div>`).join('');
+}
+function addPvPackageRow(){ pvPackagesData.push({name:'',cost:'',desc:''}); renderPvPackagesList(); }
+function renderPvPackagesList(){
+  document.getElementById('pv-packages-list').innerHTML = pvPackagesData.map((p,i)=>`
+    <div style="display:grid;grid-template-columns:1fr 1fr 1.4fr auto;gap:6px;margin-bottom:6px;">
+      <input type="text" placeholder="Package name" value="${(p.name||'').replace(/"/g,'&quot;')}" oninput="pvPackagesData[${i}].name=this.value" style="padding:6px 8px;font-size:0.8rem;border-radius:4px;border:1px solid rgba(201,150,42,0.3);">
+      <input type="text" placeholder="Cost e.g. ₹40,000" value="${(p.cost||'').replace(/"/g,'&quot;')}" oninput="pvPackagesData[${i}].cost=this.value" style="padding:6px 8px;font-size:0.8rem;border-radius:4px;border:1px solid rgba(201,150,42,0.3);">
+      <input type="text" placeholder="What's included" value="${(p.desc||'').replace(/"/g,'&quot;')}" oninput="pvPackagesData[${i}].desc=this.value" style="padding:6px 8px;font-size:0.8rem;border-radius:4px;border:1px solid rgba(201,150,42,0.3);">
+      <button type="button" onclick="pvPackagesData.splice(${i},1);renderPvPackagesList();" style="border:1px solid var(--error);color:var(--error);background:none;border-radius:4px;">×</button>
+    </div>`).join('');
 }
 
 function closeVendorForm(){
@@ -2951,17 +3487,34 @@ function openVendorDetailAdmin(id){
     <div class="v-detail-row"><span>Mobile</span><span>${pv.mobile}</span></div>
     ${pv.costPerDay ? `<div class="v-detail-row"><span>Cost per day</span><span>${rupee(pv.costPerDay)}</span></div>` : ''}
     ${pv.costPerUnit ? `<div class="v-detail-row"><span>Cost per unit</span><span>${rupee(pv.costPerUnit)}</span></div>` : ''}
+    ${pv.yearsInService ? `<div class="v-detail-row"><span>Years in service</span><span>${pv.yearsInService} yrs</span></div>` : ''}
+    ${pv.website ? `<div class="v-detail-row"><span>Website</span><span style="text-align:right;">${pv.website}</span></div>` : ''}
+    ${pv.vendorEmail ? `<div class="v-detail-row"><span>Email</span><span style="text-align:right;">${pv.vendorEmail}</span></div>` : ''}
+    ${pv.address ? `<div class="v-detail-row"><span>Address</span><span style="text-align:right;">${pv.address}</span></div>` : ''}
     ${pv.note ? `<div class="v-detail-row"><span>Note</span><span style="text-align:right;">${pv.note}</span></div>` : ''}
+    ${pv.description ? `<div class="v-detail-row" style="display:block;"><span>About</span><p style="margin-top:6px;text-align:left;font-size:0.82rem;color:var(--muted);white-space:pre-wrap;">${pv.description}</p></div>` : ''}
+    ${(pv.packages && pv.packages.length) ? `<div class="v-detail-row" style="display:block;"><span>Packages</span><div style="margin-top:6px;text-align:left;">${pv.packages.map(p=>`<div style="font-size:0.8rem;margin-bottom:4px;"><b>${p.name||''}</b> — ${p.cost||''}<br><span style="color:var(--muted);">${p.desc||''}</span></div>`).join('')}</div></div>` : ''}
+    ${(pv.gallery && pv.gallery.length) ? `<div class="v-detail-row" style="display:block;"><span>Gallery</span><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">${pv.gallery.map(g=>`<img src="${g}" style="width:56px;height:56px;object-fit:cover;border-radius:6px;">`).join('')}</div></div>` : ''}
     <div class="v-attachments">
       ${pv.businessCard ? `<a href="${pv.businessCard}" target="_blank">📇 Business Card</a>` : ''}
       ${pv.brochure ? `<a href="${pv.brochure}" target="_blank">📄 Brochure</a>` : ''}
     </div>
-    <div style="display:flex;gap:10px;margin-top:16px;">
+    <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
       <button class="btn-mini" style="flex:1;" onclick="startEditProvider('${pv.id}')">✎ Edit Details</button>
       <button class="btn-mini ghost" style="flex:1;color:var(--error);border-color:var(--error);" onclick="deleteProvider('${pv.id}')">✕ Delete Vendor</button>
     </div>
+    <button class="btn-mini ghost" style="width:100%;margin-top:10px;" onclick="copyVendorPublicLink('${pv.id}')">🔗 Copy Public Sub-Page Link</button>
   `;
   vaShowView('detail');
+}
+
+function copyVendorPublicLink(id){
+  const link = location.origin + location.pathname + '?vendor=' + encodeURIComponent(id);
+  navigator.clipboard.writeText(link).then(()=>{
+    toast('Vendor link copied — paste this on your main site or share directly ✓','success');
+  }).catch(()=>{
+    prompt('Copy this link:', link);
+  });
 }
 function closeVendorDetailPage(){
   vaShowView('grid');
@@ -2979,6 +3532,15 @@ function startEditProvider(id){
   document.getElementById('pv-costday').value = pv.costPerDay || '';
   document.getElementById('pv-costunit').value = pv.costPerUnit || '';
   document.getElementById('pv-note').value = pv.note || '';
+  document.getElementById('pv-years').value = pv.yearsInService || '';
+  document.getElementById('pv-website').value = pv.website || '';
+  document.getElementById('pv-email').value = pv.vendorEmail || '';
+  document.getElementById('pv-address').value = pv.address || '';
+  document.getElementById('pv-description').value = pv.description || '';
+  pvGalleryData = Array.isArray(pv.gallery) ? [...pv.gallery] : [];
+  renderPvGalleryPreview();
+  pvPackagesData = Array.isArray(pv.packages) ? JSON.parse(JSON.stringify(pv.packages)) : [];
+  renderPvPackagesList();
   document.getElementById('pv-card-name').textContent = pv.businessCard ? 'Existing card on file (choose to replace)' : 'No file chosen';
   document.getElementById('pv-brochure-name').textContent = pv.brochure ? 'Existing brochure on file (choose to replace)' : 'No file chosen';
   document.getElementById('va-form-title').textContent = 'Edit Vendor';
@@ -2993,6 +3555,13 @@ async function addProvider(evt){
   const costPerDay = Number(document.getElementById('pv-costday').value) || 0;
   const costPerUnit = Number(document.getElementById('pv-costunit').value) || 0;
   const note = document.getElementById('pv-note').value.trim();
+  const yearsInService = Number(document.getElementById('pv-years').value) || 0;
+  const website = document.getElementById('pv-website').value.trim();
+  const vendorEmail = document.getElementById('pv-email').value.trim();
+  const address = document.getElementById('pv-address').value.trim();
+  const description = document.getElementById('pv-description').value.trim();
+  const gallery = [...pvGalleryData];
+  const packages = pvPackagesData.filter(p=>p.name || p.cost || p.desc);
   const cardFile = document.getElementById('pv-card').files[0];
   const brochureFile = document.getElementById('pv-brochure').files[0];
   if(!name || !mobile || (!costPerDay && !costPerUnit)){ toast('Name, mobile and at least one cost field are required.','error'); return; }
@@ -3005,6 +3574,7 @@ async function addProvider(evt){
     const [newCard, newBrochure] = await Promise.all([readFileAsDataURL(cardFile), readFileAsDataURL(brochureFile)]);
     const updated = {
       ...existing, category, name, mobile, costPerDay, costPerUnit, note,
+      yearsInService, website, vendorEmail, address, description, gallery, packages,
       businessCard: newCard || existing.businessCard,
       brochure: newBrochure || existing.brochure
     };
@@ -3024,7 +3594,8 @@ async function addProvider(evt){
   }
 
   const [businessCard, brochure] = await Promise.all([readFileAsDataURL(cardFile), readFileAsDataURL(brochureFile)]);
-  const pv = { id: 'PV-'+Date.now(), category, name, mobile, costPerDay, costPerUnit, businessCard, brochure, note };
+  const pv = { id: 'PV-'+Date.now(), category, name, mobile, costPerDay, costPerUnit, businessCard, brochure, note,
+               yearsInService, website, vendorEmail, address, description, gallery, packages };
 
   providers.push(pv);
   DB.saveProviders(providers);
